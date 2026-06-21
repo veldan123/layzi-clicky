@@ -14,60 +14,55 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const links = [
     { href: "/shop", label: "Shop" },
-    { href: "/about", label: "Our Story" },
+    { href: "/about", label: "About" },
+    { href: "/faq", label: "FAQ" },
   ];
 
   return (
     <>
-      <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1.9 }}
+      <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           scrolled
-            ? "bg-white/90 backdrop-blur-md shadow-sm"
+            ? "bg-[--color-background]/95 backdrop-blur-md border-b border-[--color-border]"
             : "bg-transparent"
         )}
       >
-        <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Logo */}
+        <nav className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="text-xl font-black text-[--color-primary] hover:scale-105 transition-transform"
+            className="font-display font-bold text-lg tracking-tight text-[--color-foreground] hover:text-[--color-primary] transition-colors"
+            style={{ fontFamily: "var(--font-display)" }}
           >
-            Layzi Clicky
+            LAYZI CLICKY
           </Link>
 
-          {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
             {links.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="font-semibold text-[--color-foreground] hover:text-[--color-primary] transition-colors relative group"
+                className="text-sm font-semibold text-[--color-muted-foreground] hover:text-[--color-foreground] transition-colors tracking-wide"
               >
                 {label}
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[--color-primary] scale-x-0 group-hover:scale-x-100 transition-transform rounded-full" />
               </Link>
             ))}
           </div>
 
-          {/* Cart + mobile menu */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={openCart}
-              className="relative p-2 rounded-full hover:bg-[--color-primary-light] transition-colors"
+              className="relative p-2 hover:bg-black/5 rounded-md transition-colors"
               aria-label="Open cart"
             >
-              <ShoppingBag className="w-6 h-6 text-[--color-foreground]" />
+              <ShoppingBag className="w-5 h-5 text-[--color-foreground]" />
               <AnimatePresence>
                 {count > 0 && (
                   <motion.span
@@ -75,7 +70,7 @@ export function Navbar() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[--color-primary] text-white text-xs font-bold flex items-center justify-center"
+                    className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[--color-primary] text-white text-[10px] font-bold flex items-center justify-center"
                   >
                     {count}
                   </motion.span>
@@ -84,37 +79,33 @@ export function Navbar() {
             </button>
 
             <button
-              className="md:hidden p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="md:hidden p-2 hover:bg-black/5 rounded-md transition-colors"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Toggle menu"
             >
-              {menuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </nav>
-      </motion.header>
+      </header>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
             key="mobile-menu"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="fixed top-16 left-0 right-0 z-40 bg-white border-b shadow-lg overflow-hidden md:hidden"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-16 left-0 right-0 z-40 bg-[--color-background] border-b border-[--color-border] shadow-lg md:hidden"
           >
-            <div className="flex flex-col py-4">
+            <div className="flex flex-col py-4 px-6 gap-1">
               {links.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className="px-6 py-4 font-semibold text-[--color-foreground] hover:bg-[--color-primary-light] hover:text-[--color-primary] transition-colors"
+                  className="py-3 font-semibold text-[--color-foreground] hover:text-[--color-primary] transition-colors border-b border-[--color-border] last:border-0"
                 >
                   {label}
                 </Link>

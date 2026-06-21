@@ -1,68 +1,80 @@
 import Link from "next/link";
+import { Share2, Mail } from "lucide-react";
+
+const links = {
+  Shop: [
+    { href: "/shop", label: "All Products" },
+    { href: "/products/cute-3d-printed-dumpling-clicker", label: "Dumpling Clicker" },
+  ],
+  Company: [
+    { href: "/about", label: "About Us" },
+    { href: "/faq", label: "FAQ" },
+  ],
+  Support: [
+    { href: "/faq#shipping", label: "Shipping Info" },
+    { href: "/faq#returns", label: "Returns" },
+    { href: "mailto:hello@lazyclicky.com", label: "Contact Us" },
+  ],
+};
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-[--color-border] mt-auto">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-lg font-black text-[--color-primary] mb-3">
-              Layzi Clicky
-            </h3>
-            <p className="text-sm text-[--color-muted-foreground] leading-relaxed">
-              Handcrafted 3D printed fidget clickers made with love. Satisfying
-              clicks, adorable designs.
+    <footer className="bg-[--color-foreground] text-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
+          {/* Brand */}
+          <div className="md:col-span-2">
+            <p
+              className="font-bold text-lg tracking-tight mb-4"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              LAYZI CLICKY
             </p>
+            <p className="text-white/50 text-sm leading-relaxed max-w-xs">
+              Handcrafted 3D printed fidget clickers made in Singapore.
+              Designed to be the most satisfying thing in your pocket.
+            </p>
+            <div className="flex gap-3 mt-6">
+              <a
+                href="mailto:hello@lazyclicky.com"
+                className="w-8 h-8 border border-white/20 flex items-center justify-center hover:border-white/50 hover:text-[--color-primary] transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href="#"
+                className="w-8 h-8 border border-white/20 flex items-center justify-center hover:border-white/50 hover:text-[--color-primary] transition-colors"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
 
-          <div>
-            <h4 className="font-bold text-[--color-foreground] mb-3 text-sm uppercase tracking-wider">
-              Shop
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/shop"
-                  className="text-sm text-[--color-muted-foreground] hover:text-[--color-primary] transition-colors"
-                >
-                  All Products
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="text-sm text-[--color-muted-foreground] hover:text-[--color-primary] transition-colors"
-                >
-                  Our Story
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-[--color-foreground] mb-3 text-sm uppercase tracking-wider">
-              Support
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="mailto:hello@lazyclicky.com"
-                  className="text-sm text-[--color-muted-foreground] hover:text-[--color-primary] transition-colors"
-                >
-                  Contact Us
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* Links */}
+          {Object.entries(links).map(([group, items]) => (
+            <div key={group}>
+              <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40 mb-5">{group}</p>
+              <ul className="space-y-3">
+                {items.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className="text-sm text-white/60 hover:text-white transition-colors"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-10 pt-8 border-t border-[--color-border] flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[--color-muted]">
-            © {new Date().getFullYear()} Layzi Clicky. All rights reserved.
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/30">
+            &copy; {new Date().getFullYear()} Layzi Clicky. All rights reserved.
           </p>
-          <p className="text-xs text-[--color-muted]">
-            Made with 💕 and a 3D printer
-          </p>
+          <p className="text-xs text-white/30">Handmade in Singapore</p>
         </div>
       </div>
     </footer>

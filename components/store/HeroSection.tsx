@@ -3,114 +3,168 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
+import { ArrowRight, Package, Truck } from "lucide-react";
+
+const headline = ["THE MOST", "SATISFYING", "CLICK."];
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-[--color-primary-light] via-[--color-background] to-[--color-secondary-light]">
-      {/* Floating decorative blobs */}
-      <motion.div
-        animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-10 right-10 w-64 h-64 bg-[--color-primary] opacity-10 rounded-full blur-3xl pointer-events-none"
-      />
-      <motion.div
-        animate={{ scale: [1, 1.15, 1], rotate: [0, -5, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-10 left-10 w-80 h-80 bg-[--color-secondary] opacity-10 rounded-full blur-3xl pointer-events-none"
+    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[--color-background]">
+      {/* Background accent block */}
+      <div
+        className="absolute top-0 right-0 w-[45%] h-full bg-[--color-foreground] opacity-[0.03] pointer-events-none"
+        style={{ clipPath: "polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Text */}
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2, duration: 0.6 }}
-          >
-            <span className="inline-block text-xs font-bold tracking-widest text-[--color-primary] uppercase bg-[--color-primary-light] px-4 py-2 rounded-full mb-6">
-              🎯 Handcrafted in Singapore
-            </span>
-          </motion.div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.1, duration: 0.7 }}
-            className="text-5xl md:text-7xl font-black text-[--color-foreground] leading-[1.05] mb-6"
-          >
-            Click.{" "}
-            <span className="text-[--color-primary]">Satisfy.</span>
-            <br />
-            Repeat.
-          </motion.h1>
+          {/* Left — Text */}
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-xs font-bold tracking-[0.25em] text-[--color-primary] uppercase mb-10"
+            >
+              Handcrafted in Singapore
+            </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.25, duration: 0.6 }}
-            className="text-lg text-[--color-muted-foreground] leading-relaxed mb-8 max-w-md"
-          >
-            Adorably designed 3D printed fidget clickers that are impossible to
-            put down. Find your perfect click companion.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.4, duration: 0.5 }}
-            className="flex flex-wrap gap-4"
-          >
-            <Link href="/shop">
-              <Button variant="primary" size="lg">
-                Shop Now ✨
-              </Button>
-            </Link>
-            <Link href="/about">
-              <Button variant="outline" size="lg">
-                Our Story
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* Hero image */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2.1, duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-          className="relative"
-        >
-          <motion.div
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="relative aspect-square max-w-md mx-auto"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-[--color-primary-light] to-[--color-secondary-light] rounded-3xl rotate-3" />
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-              <Image
-                src="/placeholder.svg"
-                alt="Layzi Clicky — Cute 3D Printed Fidget Clicker"
-                width={600}
-                height={600}
-                className="w-full h-full object-cover"
-                priority
-                unoptimized
-              />
+            <div className="space-y-1 mb-8">
+              {headline.map((line, i) => (
+                <div key={line} className="overflow-hidden">
+                  <motion.h1
+                    initial={{ y: "105%" }}
+                    animate={{ y: 0 }}
+                    transition={{
+                      duration: 0.75,
+                      delay: 0.15 + i * 0.12,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="text-[clamp(3rem,8vw,6.5rem)] font-black leading-none tracking-tight text-[--color-foreground]"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    {line === "CLICK." ? (
+                      <>CLICK<span className="text-[--color-primary]">.</span></>
+                    ) : line}
+                  </motion.h1>
+                </div>
+              ))}
             </div>
 
-            {/* Floating badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 2.6, type: "spring", stiffness: 200 }}
-              className="absolute -bottom-4 -right-4 bg-[--color-primary] text-white rounded-2xl px-4 py-3 shadow-lg font-black text-sm"
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.55 }}
+              className="text-base text-[--color-muted-foreground] leading-relaxed max-w-sm mb-10"
             >
-              😍 So Satisfying
+              3D printed fidget clickers designed for maximum satisfaction.
+              Pocket-sized, endlessly clickable, completely addictive.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.68 }}
+              className="flex flex-wrap gap-3"
+            >
+              <Link href="/shop">
+                <motion.span
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-2 bg-[--color-foreground] text-white px-7 py-3.5 text-sm font-bold tracking-wide uppercase cursor-pointer"
+                >
+                  Shop Now
+                  <ArrowRight className="w-4 h-4" />
+                </motion.span>
+              </Link>
+              <Link href="/about">
+                <motion.span
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-2 border border-[--color-border] text-[--color-foreground] px-7 py-3.5 text-sm font-bold tracking-wide uppercase cursor-pointer hover:border-[--color-foreground] transition-colors"
+                >
+                  Our Story
+                </motion.span>
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Right — Product visual */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="relative"
+          >
+            <motion.div
+              animate={{ y: [0, -14, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="relative"
+            >
+              {/* Orange background block offset */}
+              <div className="absolute inset-0 bg-[--color-primary] translate-x-4 translate-y-4 opacity-10" />
+
+              <div className="relative aspect-square bg-[--color-border] overflow-hidden">
+                <Image
+                  src="/placeholder.svg"
+                  alt="Layzi Clicky Dumpling Fidget Clicker"
+                  fill
+                  className="object-cover"
+                  priority
+                  unoptimized
+                />
+              </div>
+
+              {/* Stat cards */}
+              <motion.div
+                initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ delay: 0.7, duration: 0.5 }}
+                className="absolute -left-6 top-1/3 bg-white shadow-xl border border-[--color-border] p-4"
+              >
+                <div className="flex items-center gap-3">
+                  <Package className="w-4 h-4 text-[--color-primary]" />
+                  <div>
+                    <p className="text-xl font-black leading-none" style={{ fontFamily: "var(--font-display)" }}>100%</p>
+                    <p className="text-[10px] font-bold text-[--color-muted-foreground] uppercase tracking-wider mt-0.5">Handmade</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                className="absolute -right-4 bottom-12 bg-[--color-primary] text-white p-4"
+              >
+                <div className="flex items-center gap-3">
+                  <Truck className="w-4 h-4" />
+                  <div>
+                    <p className="text-xl font-black leading-none" style={{ fontFamily: "var(--font-display)" }}>Free</p>
+                    <p className="text-[10px] font-bold opacity-80 uppercase tracking-wider mt-0.5">Shipping</p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[--color-muted]">Scroll</span>
+        <motion.div
+          animate={{ scaleY: [0, 1, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          className="w-px h-10 bg-[--color-muted] origin-top"
+        />
+      </motion.div>
     </section>
   );
 }

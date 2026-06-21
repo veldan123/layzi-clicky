@@ -16,28 +16,31 @@ export default async function ShopPage() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <AnimatedSection className="mb-12">
-        <h1 className="text-5xl font-black text-[--color-foreground] mb-3">
-          The Shop 🛍️
+    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+      <AnimatedSection className="mb-16 border-b border-[--color-border] pb-10">
+        <p className="text-xs font-bold tracking-[0.25em] text-[--color-primary] uppercase mb-3">All Products</p>
+        <h1
+          className="text-5xl md:text-6xl font-black text-[--color-foreground] leading-none"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          The Shop
         </h1>
-        <p className="text-[--color-muted-foreground] text-lg">
-          {products.length === 0
-            ? "New products dropping soon — stay tuned!"
-            : `${products.length} ${products.length === 1 ? "product" : "products"} handcrafted with love`}
-        </p>
+        {products.length > 0 && (
+          <p className="text-[--color-muted-foreground] mt-4 text-sm">
+            {products.length} {products.length === 1 ? "product" : "products"} — handcrafted, limited runs
+          </p>
+        )}
       </AnimatedSection>
 
       {products.length === 0 ? (
-        <AnimatedSection className="text-center py-24">
-          <div className="text-6xl mb-6">🎯</div>
-          <h2 className="text-2xl font-black mb-3">Coming Soon!</h2>
-          <p className="text-[--color-muted-foreground]">
-            We&apos;re printing something special. Check back soon!
+        <AnimatedSection className="text-center py-32 border border-[--color-border]">
+          <h2 className="text-2xl font-black mb-3">Coming Soon</h2>
+          <p className="text-[--color-muted-foreground] text-sm">
+            New products are on the printer. Check back soon.
           </p>
         </AnimatedSection>
       ) : (
-        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
           {products.map((product) => (
             <StaggerItem key={product.id}>
               <ProductCard
