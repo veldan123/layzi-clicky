@@ -56,7 +56,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="bg-[--color-foreground] text-white py-24">
+      <section className="bg-[#111111] text-white py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection className="mb-16">
             <p className="text-xs font-bold tracking-[0.25em] text-[--color-primary] uppercase mb-4">What We Stand For</p>
@@ -113,7 +113,7 @@ export default function AboutPage() {
             </h2>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-3 bg-[--color-foreground] text-white px-8 py-4 font-bold text-sm tracking-wide uppercase hover:bg-[--color-primary] transition-colors flex-shrink-0"
+              className="inline-flex items-center gap-3 bg-[#111111] text-white px-8 py-4 font-bold text-sm tracking-wide uppercase hover:bg-[#FF3D00] transition-colors flex-shrink-0"
             >
               Shop Now
               <ArrowRight className="w-4 h-4" />

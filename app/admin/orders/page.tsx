@@ -42,7 +42,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             href={s ? `/admin/orders?status=${s}` : "/admin/orders"}
             className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${
               (s === "" && !status) || s === status
-                ? "bg-[--color-primary] text-white"
+                ? "bg-[#FF3D00] text-white"
                 : "bg-white border border-gray-200 text-gray-600 hover:border-[--color-primary] hover:text-[--color-primary]"
             }`}
           >

@@ -31,7 +31,7 @@ export function Navbar() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           scrolled
-            ? "bg-[--color-background]/95 backdrop-blur-md border-b border-[--color-border]"
+            ? "bg-[#F8F7F3]/95 backdrop-blur-md border-b border-[--color-border]"
             : "bg-transparent"
         )}
       >
@@ -70,7 +70,7 @@ export function Navbar() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[--color-primary] text-white text-[10px] font-bold flex items-center justify-center"
+                    className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#FF3D00] text-white text-[10px] font-bold flex items-center justify-center"
                   >
                     {count}
                   </motion.span>
@@ -97,7 +97,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-16 left-0 right-0 z-40 bg-[--color-background] border-b border-[--color-border] shadow-lg md:hidden"
+            className="fixed top-16 left-0 right-0 z-40 bg-[#F8F7F3] border-b border-[--color-border] shadow-lg md:hidden"
           >
             <div className="flex flex-col py-4 px-6 gap-1">
               {links.map(({ href, label }) => (

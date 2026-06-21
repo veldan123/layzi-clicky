@@ -42,7 +42,7 @@ export default async function HomePage() {
       <HeroSection />
 
       {/* Marquee strip */}
-      <div className="bg-[--color-foreground] text-white py-3.5 overflow-hidden">
+      <div className="bg-[#111111] text-white py-3.5 overflow-hidden">
         <div
           className="flex gap-12 whitespace-nowrap w-max"
           style={{ animation: "marquee 30s linear infinite" }}
@@ -113,10 +113,10 @@ export default async function HomePage() {
       </section>
 
       {/* Statement section */}
-      <section className="bg-[--color-foreground] text-white py-28 px-6 overflow-hidden relative">
+      <section className="bg-[#111111] text-white py-28 px-6 overflow-hidden relative">
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-[--color-primary] blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-[--color-primary] blur-3xl translate-x-1/2 translate-y-1/2" />
+          <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-[#FF3D00] blur-3xl -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-[#FF3D00] blur-3xl translate-x-1/2 translate-y-1/2" />
         </div>
         <AnimatedSection className="max-w-5xl mx-auto text-center relative z-10">
           <p className="text-xs font-bold tracking-[0.25em] text-[--color-primary] uppercase mb-8">Our Promise</p>
@@ -165,7 +165,7 @@ export default async function HomePage() {
       </section>
 
       {/* Why section */}
-      <section className="bg-[--color-card] py-24">
+      <section className="bg-white py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection className="mb-16">
             <p className="text-xs font-bold tracking-[0.25em] text-[--color-primary] uppercase mb-3">Why Layzi Clicky</p>
@@ -181,7 +181,7 @@ export default async function HomePage() {
             {features.map(({ icon: Icon, title, desc }) => (
               <StaggerItem key={title}>
                 <div className="group">
-                  <div className="w-10 h-10 border border-[--color-border] flex items-center justify-center mb-6 group-hover:bg-[--color-primary] group-hover:border-[--color-primary] transition-colors">
+                  <div className="w-10 h-10 border border-[--color-border] flex items-center justify-center mb-6 group-hover:bg-[#FF3D00] group-hover:border-[--color-primary] transition-colors">
                     <Icon className="w-4 h-4 text-[--color-foreground] group-hover:text-white transition-colors" />
                   </div>
                   <h3 className="text-base font-black text-[--color-foreground] mb-3">{title}</h3>
@@ -215,7 +215,7 @@ export default async function HomePage() {
       {/* CTA section */}
       <AnimatedSection>
         <section className="max-w-7xl mx-auto px-6 lg:px-8 py-24">
-          <div className="bg-[--color-primary] p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="bg-[#FF3D00] p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
               <h2
                 className="text-4xl md:text-5xl font-black text-white leading-none mb-4"

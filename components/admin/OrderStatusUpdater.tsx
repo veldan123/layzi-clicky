@@ -56,7 +56,7 @@ export function OrderStatusUpdater({ orderId, currentStatus, notes }: Props) {
             onClick={() => setStatus(s)}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${
               status === s
-                ? "border-[--color-primary] bg-[--color-primary-light] text-[--color-primary]"
+                ? "border-[--color-primary] bg-[#FFF0EB] text-[--color-primary]"
                 : "border-gray-100 hover:border-gray-200 text-gray-600"
             }`}
           >

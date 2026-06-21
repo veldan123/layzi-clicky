@@ -19,7 +19,7 @@ export default async function AdminProductsPage() {
         <h1 className="text-2xl font-black text-gray-900">Products</h1>
         <Link
           href="/admin/products/new"
-          className="bg-[--color-primary] text-white font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[--color-primary-dark] transition-colors"
+          className="bg-[#FF3D00] text-white font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#CC3100] transition-colors"
         >
           + Add Product
         </Link>

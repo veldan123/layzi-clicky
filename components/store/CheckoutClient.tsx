@@ -341,7 +341,7 @@ export function CheckoutClient({
                   key={`${item.productId}-${item.variantId}`}
                   className="flex gap-3"
                 >
-                  <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-[--color-primary-light] flex-shrink-0">
+                  <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-[#FFF0EB] flex-shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
@@ -349,7 +349,7 @@ export function CheckoutClient({
                       className="object-cover"
                       unoptimized={item.image.endsWith(".svg")}
                     />
-                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[--color-primary] text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#FF3D00] text-white text-xs font-bold rounded-full flex items-center justify-center">
                       {item.quantity}
                     </span>
                   </div>

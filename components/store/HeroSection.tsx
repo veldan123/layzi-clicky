@@ -9,10 +9,10 @@ const headline = ["THE MOST", "SATISFYING", "CLICK."];
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[--color-background]">
+    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#F8F7F3]">
       {/* Background accent block */}
       <div
-        className="absolute top-0 right-0 w-[45%] h-full bg-[--color-foreground] opacity-[0.03] pointer-events-none"
+        className="absolute top-0 right-0 w-[45%] h-full bg-[#111111] opacity-[0.03] pointer-events-none"
         style={{ clipPath: "polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
       />
 
@@ -72,7 +72,7 @@ export function HeroSection() {
                 <motion.span
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 bg-[--color-foreground] text-white px-7 py-3.5 text-sm font-bold tracking-wide uppercase cursor-pointer"
+                  className="inline-flex items-center gap-2 bg-[#111111] text-white px-7 py-3.5 text-sm font-bold tracking-wide uppercase cursor-pointer"
                 >
                   Shop Now
                   <ArrowRight className="w-4 h-4" />
@@ -103,9 +103,9 @@ export function HeroSection() {
               className="relative"
             >
               {/* Orange background block offset */}
-              <div className="absolute inset-0 bg-[--color-primary] translate-x-4 translate-y-4 opacity-10" />
+              <div className="absolute inset-0 bg-[#FF3D00] translate-x-4 translate-y-4 opacity-10" />
 
-              <div className="relative aspect-square bg-[--color-border] overflow-hidden">
+              <div className="relative aspect-square bg-[#E2E1DC] overflow-hidden">
                 <Image
                   src="/placeholder.svg"
                   alt="Layzi Clicky Dumpling Fidget Clicker"
@@ -136,7 +136,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, x: 20, scale: 0.9 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute -right-4 bottom-12 bg-[--color-primary] text-white p-4"
+                className="absolute -right-4 bottom-12 bg-[#FF3D00] text-white p-4"
               >
                 <div className="flex items-center gap-3">
                   <Truck className="w-4 h-4" />

@@ -170,7 +170,7 @@ export default function FaqPage() {
           </a>
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 bg-[--color-foreground] text-white px-6 py-3 font-bold text-sm tracking-wide hover:bg-[--color-primary] transition-colors"
+            className="inline-flex items-center gap-2 bg-[#111111] text-white px-6 py-3 font-bold text-sm tracking-wide hover:bg-[#FF3D00] transition-colors"
           >
             Shop Now
             <ArrowRight className="w-3.5 h-3.5" />

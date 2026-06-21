@@ -59,7 +59,7 @@ export function ProductDetail({ product }: Props) {
             initial={{ opacity: 0.7 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.25 }}
-            className="relative aspect-square bg-[--color-border] overflow-hidden mb-3"
+            className="relative aspect-square bg-[#E2E1DC] overflow-hidden mb-3"
           >
             <Image
               src={activeImage}
@@ -74,13 +74,13 @@ export function ProductDetail({ product }: Props) {
               <>
                 <button
                   onClick={() => setCurrentImage((i) => (i - 1 + images.length) % images.length)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white flex items-center justify-center shadow hover:bg-[--color-background] transition-colors"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white flex items-center justify-center shadow hover:bg-[#F8F7F3] transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setCurrentImage((i) => (i + 1) % images.length)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white flex items-center justify-center shadow hover:bg-[--color-background] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white flex items-center justify-center shadow hover:bg-[#F8F7F3] transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -142,7 +142,7 @@ export function ProductDetail({ product }: Props) {
                     onClick={() => { setSelectedVariant(v); setCurrentImage(0); }}
                     className={`px-4 py-2 border text-sm font-semibold transition-all ${
                       selectedVariant?.id === v.id
-                        ? "border-[--color-foreground] bg-[--color-foreground] text-white"
+                        ? "border-[--color-foreground] bg-[#111111] text-white"
                         : "border-[--color-border] text-[--color-foreground] hover:border-[--color-foreground]"
                     }`}
                   >
@@ -159,7 +159,7 @@ export function ProductDetail({ product }: Props) {
             <div className="inline-flex items-center border border-[--color-border]">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="w-10 h-10 flex items-center justify-center hover:bg-[--color-background] transition-colors"
+                className="w-10 h-10 flex items-center justify-center hover:bg-[#F8F7F3] transition-colors"
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
@@ -168,7 +168,7 @@ export function ProductDetail({ product }: Props) {
               </span>
               <button
                 onClick={() => setQuantity((q) => q + 1)}
-                className="w-10 h-10 flex items-center justify-center hover:bg-[--color-background] transition-colors"
+                className="w-10 h-10 flex items-center justify-center hover:bg-[#F8F7F3] transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>
@@ -178,7 +178,7 @@ export function ProductDetail({ product }: Props) {
           {/* Add to cart */}
           <button
             onClick={handleAddToCart}
-            className="w-full bg-[--color-foreground] text-white py-4 font-bold text-sm tracking-[0.15em] uppercase flex items-center justify-center gap-3 hover:bg-[--color-primary] transition-colors"
+            className="w-full bg-[#111111] text-white py-4 font-bold text-sm tracking-[0.15em] uppercase flex items-center justify-center gap-3 hover:bg-[#FF3D00] transition-colors"
           >
             <AnimatePresence mode="wait" initial={false}>
               {added ? (

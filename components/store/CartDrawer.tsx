@@ -30,7 +30,7 @@ export function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-[--color-background] shadow-2xl flex flex-col"
+            className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-[#F8F7F3] shadow-2xl flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-[--color-border]">
@@ -40,7 +40,7 @@ export function CartDrawer() {
                   Your Bag
                 </h2>
                 {items.length > 0 && (
-                  <span className="bg-[--color-primary] text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center">
+                  <span className="bg-[#FF3D00] text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center">
                     {items.reduce((s, i) => s + i.quantity, 0)}
                   </span>
                 )}
@@ -86,7 +86,7 @@ export function CartDrawer() {
                         exit={{ opacity: 0, x: -20 }}
                         className="flex gap-4 bg-white border border-[--color-border] p-4"
                       >
-                        <div className="relative w-16 h-16 bg-[--color-border] flex-shrink-0 overflow-hidden">
+                        <div className="relative w-16 h-16 bg-[#E2E1DC] flex-shrink-0 overflow-hidden">
                           <Image
                             src={item.image}
                             alt={item.name}
@@ -109,14 +109,14 @@ export function CartDrawer() {
                             <div className="flex items-center border border-[--color-border]">
                               <button
                                 onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)}
-                                className="w-7 h-7 flex items-center justify-center hover:bg-[--color-background] transition-colors"
+                                className="w-7 h-7 flex items-center justify-center hover:bg-[#F8F7F3] transition-colors"
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
                               <span className="w-8 text-center font-bold text-sm">{item.quantity}</span>
                               <button
                                 onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
-                                className="w-7 h-7 flex items-center justify-center hover:bg-[--color-background] transition-colors"
+                                className="w-7 h-7 flex items-center justify-center hover:bg-[#F8F7F3] transition-colors"
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
@@ -147,7 +147,7 @@ export function CartDrawer() {
                 </div>
                 <p className="text-xs text-[--color-muted-foreground]">Shipping calculated at checkout · Free on all orders</p>
                 <Link href="/checkout" onClick={closeCart}>
-                  <button className="w-full bg-[--color-foreground] text-white py-4 font-bold text-sm tracking-[0.1em] uppercase flex items-center justify-center gap-2 hover:bg-[--color-primary] transition-colors">
+                  <button className="w-full bg-[#111111] text-white py-4 font-bold text-sm tracking-[0.1em] uppercase flex items-center justify-center gap-2 hover:bg-[#FF3D00] transition-colors">
                     Checkout
                     <ArrowRight className="w-4 h-4" />
                   </button>

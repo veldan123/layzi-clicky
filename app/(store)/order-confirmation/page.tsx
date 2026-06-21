@@ -50,7 +50,7 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
       {/* Success header */}
       <div className="text-center mb-12">
-        <div className="w-24 h-24 bg-[--color-primary-light] rounded-full flex items-center justify-center mx-auto mb-6 text-5xl">
+        <div className="w-24 h-24 bg-[#FFF0EB] rounded-full flex items-center justify-center mx-auto mb-6 text-5xl">
           🎉
         </div>
         <h1 className="text-4xl font-black text-[--color-foreground] mb-2">

@@ -47,7 +47,7 @@ export function ProductCard({
     <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="group">
       <Link href={`/products/${slug}`} className="block">
         {/* Image */}
-        <div className="relative aspect-square bg-[--color-border] overflow-hidden mb-4">
+        <div className="relative aspect-square bg-[#E2E1DC] overflow-hidden mb-4">
           <Image
             src={image}
             alt={name}
@@ -61,7 +61,7 @@ export function ProductCard({
           <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
             <button
               onClick={handleAdd}
-              className="w-full bg-[--color-foreground] text-white py-3 text-xs font-bold tracking-[0.15em] uppercase flex items-center justify-center gap-2 hover:bg-[--color-primary] transition-colors"
+              className="w-full bg-[#111111] text-white py-3 text-xs font-bold tracking-[0.15em] uppercase flex items-center justify-center gap-2 hover:bg-[#FF3D00] transition-colors"
             >
               <AnimatePresence mode="wait" initial={false}>
                 {added ? (

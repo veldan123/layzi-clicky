@@ -16,7 +16,7 @@ export function SplashScreen() {
       {show && (
         <motion.div
           key="splash"
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-[--color-background]"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#F8F7F3]"
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         >

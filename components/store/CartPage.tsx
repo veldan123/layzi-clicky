@@ -53,7 +53,7 @@ export function CartPage() {
                 exit={{ opacity: 0, x: -40 }}
                 className="flex gap-5 p-5 bg-white rounded-2xl border border-[--color-border] shadow-sm"
               >
-                <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-[--color-primary-light] flex-shrink-0">
+                <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-[#FFF0EB] flex-shrink-0">
                   <Image
                     src={item.image}
                     alt={item.name}

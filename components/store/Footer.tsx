@@ -19,7 +19,7 @@ const links = {
 
 export function Footer() {
   return (
-    <footer className="bg-[--color-foreground] text-white">
+    <footer className="bg-[#111111] text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
           {/* Brand */}
