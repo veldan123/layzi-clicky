@@ -1,6 +1,12 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { config as loadEnv } from "dotenv";
 
-const db = new PrismaClient();
+loadEnv({ path: ".env.local" });
+loadEnv({ path: ".env" });
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const db = new PrismaClient({ adapter });
 
 async function main() {
   // Seed the Dumpling Clicker product
