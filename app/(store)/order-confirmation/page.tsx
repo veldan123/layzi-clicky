@@ -95,7 +95,7 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
           <p className="text-xs text-[--color-muted-foreground] uppercase tracking-wider font-bold mb-4">
             Items
           </p>
-          {order.items.map((item) => (
+          {order.items.map((item: { id: string; productName: string; variantName: string | null; quantity: number; price: number }) => (
             <div key={item.id} className="flex justify-between text-sm">
               <span className="text-[--color-foreground]">
                 {item.productName}
