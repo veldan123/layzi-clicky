@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#ffd6e7"/>
+  <rect x="100" y="100" width="600" height="600" rx="40" fill="#fff5f8" stroke="#ff6b9d" stroke-width="2" stroke-dasharray="12,8"/>
+  <text x="400" y="360" font-family="'Helvetica Neue', Arial, sans-serif" font-size="72" font-weight="700" fill="#ff6b9d" text-anchor="middle" dominant-baseline="middle">Sample</text>
+  <text x="400" y="450" font-family="'Helvetica Neue', Arial, sans-serif" font-size="24" fill="#c9b3e8" text-anchor="middle" dominant-baseline="middle">Replace with your photo</text>
+  <circle cx="200" cy="200" r="30" fill="#f9c4d2" opacity="0.6"/>
+  <circle cx="600" cy="150" r="20" fill="#a8e6cf" opacity="0.6"/>
+  <circle cx="650" cy="620" r="35" fill="#c9b3e8" opacity="0.5"/>
+  <circle cx="150" cy="640" r="25" fill="#ffd6e7" opacity="0.8"/>
+</svg>
