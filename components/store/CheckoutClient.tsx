@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
-  PaymentElement,
+  CardElement,
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
@@ -119,7 +119,7 @@ function SectionLabel({ number, title }: { number: string; title: string }) {
   );
 }
 
-function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
+function PaymentForm({ clientSecret, onSuccess }: { clientSecret: string; onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
@@ -131,9 +131,11 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
     setSubmitting(true);
     setError(null);
 
-    const { error: stripeError } = await stripe.confirmPayment({
-      elements,
-      redirect: "if_required",
+    const card = elements.getElement(CardElement);
+    if (!card) { setSubmitting(false); return; }
+
+    const { error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: { card },
     });
 
     if (stripeError) {
@@ -147,8 +149,21 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="border border-gray-200 rounded-lg p-4 bg-white">
-        <PaymentElement options={{ layout: "accordion" }} />
+      <div className="border border-gray-200 rounded-lg px-4 py-4 bg-white focus-within:border-gray-900 transition-colors">
+        <CardElement
+          options={{
+            style: {
+              base: {
+                fontSize: "15px",
+                color: "#111111",
+                fontFamily: "inherit",
+                "::placeholder": { color: "#9ca3af" },
+              },
+              invalid: { color: "#ef4444" },
+            },
+            hidePostalCode: true,
+          }}
+        />
       </div>
 
       {error && (
@@ -171,8 +186,6 @@ function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
         <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> SSL Secured</span>
         <span>·</span>
         <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> Powered by Stripe</span>
-        <span>·</span>
-        <span>Card only</span>
       </div>
     </form>
   );
@@ -429,43 +442,8 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
                     Your card information is encrypted and never stored on our servers.
                   </p>
                   {clientSecret && (
-                    <Elements
-                      stripe={stripePromise}
-                      options={{
-                        clientSecret,
-                        appearance: {
-                          theme: "stripe",
-                          variables: {
-                            colorPrimary: "#111111",
-                            colorBackground: "#ffffff",
-                            colorText: "#111111",
-                            colorDanger: "#ef4444",
-                            fontFamily: "inherit",
-                            borderRadius: "8px",
-                            spacingUnit: "4px",
-                          },
-                          rules: {
-                            ".Input": {
-                              border: "1px solid #e5e7eb",
-                              boxShadow: "none",
-                              padding: "12px 16px",
-                            },
-                            ".Input:focus": {
-                              border: "1px solid #111111",
-                              boxShadow: "0 0 0 1px #111111",
-                            },
-                            ".Label": {
-                              fontSize: "11px",
-                              fontWeight: "600",
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                              color: "#6b7280",
-                            },
-                          },
-                        },
-                      }}
-                    >
-                      <PaymentForm onSuccess={handlePaymentSuccess} />
+                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                      <PaymentForm clientSecret={clientSecret} onSuccess={handlePaymentSuccess} />
                     </Elements>
                   )}
                 </div>
