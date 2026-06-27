@@ -145,7 +145,7 @@ export function CartDrawer() {
                     {formatPrice(cartTotal)}
                   </span>
                 </div>
-                <p className="text-xs text-[--color-muted-foreground]">Shipping calculated at checkout · Free on all orders</p>
+                <p className="text-xs text-[--color-muted-foreground]">Shipping calculated at checkout · Free on orders over $50</p>
                 <Link href="/checkout" onClick={closeCart}>
                   <button className="w-full bg-[#111111] text-white py-4 font-bold text-sm tracking-[0.1em] uppercase flex items-center justify-center gap-2 hover:bg-[#FF3D00] transition-colors">
                     Checkout

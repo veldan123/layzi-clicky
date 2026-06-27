@@ -14,6 +14,7 @@ import { useCart } from "@/store/cart";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { formatPrice } from "@/lib/utils";
+import { calculateShipping, shippingLabel } from "@/lib/shipping";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -118,10 +119,15 @@ export function CheckoutClient({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ShippingForm>({
-    defaultValues: { country: "US" },
+    defaultValues: { country: "SG" },
   });
+
+  const watchedCountry = watch("country") || "SG";
+  const estimatedShipping = calculateShipping(watchedCountry, cartTotal);
+  const estimatedTotal = cartTotal + estimatedShipping;
 
   useEffect(() => {
     if (items.length === 0) router.push("/cart");
@@ -370,23 +376,24 @@ export function CheckoutClient({
 
             <div className="border-t border-[--color-border] pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-[--color-muted-foreground]">
-                  Subtotal
-                </span>
+                <span className="text-[--color-muted-foreground]">Subtotal</span>
                 <span>{formatPrice(cartTotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-[--color-muted-foreground]">
-                  Shipping
-                </span>
-                <span className="text-[--color-success] font-semibold">
-                  FREE
-                </span>
+                <span className="text-[--color-muted-foreground]">Shipping</span>
+                {estimatedShipping === 0 ? (
+                  <span className="text-[--color-success] font-semibold">Free</span>
+                ) : (
+                  <span className="font-semibold">{formatPrice(estimatedShipping)}</span>
+                )}
               </div>
+              <p className="text-[10px] text-[--color-muted-foreground]">
+                {shippingLabel(watchedCountry, cartTotal)}
+              </p>
               <div className="flex justify-between font-black text-lg pt-2 border-t border-[--color-border]">
                 <span>Total</span>
                 <span className="text-[--color-primary]">
-                  {formatPrice(cartTotal)}
+                  {formatPrice(estimatedTotal)}
                 </span>
               </div>
             </div>

@@ -89,7 +89,7 @@ export function CTASection() {
             transition={{ duration: 0.5, delay: 0.35 }}
             className="text-white/80 text-base max-w-md"
           >
-            Free shipping on all orders. Each clicker is printed and assembled fresh for you.
+            Free shipping on orders over $50. Each clicker is printed and assembled fresh for you.
           </motion.p>
         </div>
 

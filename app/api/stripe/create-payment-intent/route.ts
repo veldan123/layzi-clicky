@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
+import { calculateShipping } from "@/lib/shipping";
 import * as z from "zod";
 
 const schema = z.object({
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const shippingCost = 0; // Free shipping for now
+    const shippingCost = calculateShipping(shipping.country, subtotal);
     const total = subtotal + shippingCost;
 
     // Create order in DB
@@ -115,6 +116,7 @@ export async function POST(req: NextRequest) {
     return Response.json({
       clientSecret: paymentIntent.client_secret,
       orderId: order.id,
+      shippingCost,
     });
   } catch (err) {
     console.error("create-payment-intent error:", err);

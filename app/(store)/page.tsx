@@ -38,7 +38,7 @@ export default async function HomePage() {
             .fill([
               "PREMIUM QUALITY",
               "HANDCRAFTED",
-              "FREE SHIPPING",
+              "SINGPOST DELIVERY",
               "MADE IN SINGAPORE",
               "LIMITED RUNS",
               "3D PRINTED",

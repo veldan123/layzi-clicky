@@ -142,8 +142,8 @@ export function CartPage() {
                 <span className="text-[--color-muted-foreground]">
                   Shipping
                 </span>
-                <span className="font-semibold text-[--color-success]">
-                  FREE
+                <span className="font-semibold text-[--color-muted-foreground]">
+                  Calculated at checkout
                 </span>
               </div>
             </div>

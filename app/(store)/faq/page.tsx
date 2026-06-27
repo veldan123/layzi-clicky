@@ -33,20 +33,20 @@ const faqs = [
     id: "shipping",
     items: [
       {
-        q: "Do you offer free shipping?",
-        a: "Yes — free shipping on every order, everywhere. No minimums, no catches.",
+        q: "How much does shipping cost?",
+        a: "Shipping is free on all orders over $50. For orders under $50: Singapore is $2 flat (Singpost Standard). ASEAN countries (Malaysia, Indonesia, Thailand, Philippines, Vietnam, etc.) are $5. Asia Pacific (Australia, China, Japan, Korea, etc.) is $8. All other countries are $12. Rates are calculated automatically at checkout based on your country.",
       },
       {
         q: "How long does delivery take?",
-        a: "Since every clicker is printed fresh when you order, please allow 2–3 business days for printing and assembly. After that, standard delivery is 5–10 business days for most regions. Expedited options are available at checkout.",
+        a: "Every clicker is printed fresh when you order — allow 2–3 business days for printing and assembly. After that: Singapore takes 3–5 business days. ASEAN countries take 7–14 business days via Singpost Airmail. Asia Pacific takes 10–21 business days. Rest of world takes 14–28 business days depending on customs.",
       },
       {
         q: "Do you ship internationally?",
-        a: "Yes, we ship worldwide from Singapore. International orders typically arrive within 7–14 business days depending on your location and local customs.",
+        a: "Yes, we ship worldwide from Singapore via Singpost Airmail. Shipping costs are calculated at checkout based on your destination country.",
       },
       {
         q: "Will I get a tracking number?",
-        a: "Yes. Once your order ships, you'll receive an email with a tracking number so you can follow your clicker's journey.",
+        a: "Singapore orders via Singpost Standard include basic tracking. International Singpost Airmail orders may have limited tracking depending on your country's postal service.",
       },
     ],
   },

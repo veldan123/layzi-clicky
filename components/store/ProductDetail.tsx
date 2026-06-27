@@ -210,7 +210,7 @@ export function ProductDetail({ product }: Props) {
           {/* Trust signals */}
           <div className="grid grid-cols-3 gap-4 border-t border-[--color-border] pt-6">
             {[
-              { icon: Truck, label: "Free Shipping" },
+              { icon: Truck, label: "Ships from Singapore" },
               { icon: Package, label: "Handmade" },
               { icon: RefreshCw, label: "Easy Returns" },
             ].map(({ icon: Icon, label }) => (
