@@ -465,7 +465,7 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
                         },
                       }}
                     >
-                      <PaymentForm orderId={orderId!} onSuccess={handlePaymentSuccess} />
+                      <PaymentForm onSuccess={handlePaymentSuccess} />
                     </Elements>
                   )}
                 </div>
