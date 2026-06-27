@@ -18,6 +18,73 @@ import { calculateShipping, shippingLabel } from "@/lib/shipping";
 import Image from "next/image";
 import Link from "next/link";
 
+const COUNTRIES = [
+  { code: "SG", name: "Singapore" },
+  { code: "MY", name: "Malaysia" },
+  { code: "ID", name: "Indonesia" },
+  { code: "TH", name: "Thailand" },
+  { code: "PH", name: "Philippines" },
+  { code: "VN", name: "Vietnam" },
+  { code: "BN", name: "Brunei" },
+  { code: "KH", name: "Cambodia" },
+  { code: "LA", name: "Laos" },
+  { code: "MM", name: "Myanmar" },
+  { code: "AU", name: "Australia" },
+  { code: "NZ", name: "New Zealand" },
+  { code: "CN", name: "China" },
+  { code: "HK", name: "Hong Kong" },
+  { code: "TW", name: "Taiwan" },
+  { code: "JP", name: "Japan" },
+  { code: "KR", name: "South Korea" },
+  { code: "IN", name: "India" },
+  { code: "BD", name: "Bangladesh" },
+  { code: "LK", name: "Sri Lanka" },
+  { code: "NP", name: "Nepal" },
+  { code: "PK", name: "Pakistan" },
+  { code: "MO", name: "Macau" },
+  { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "CA", name: "Canada" },
+  { code: "DE", name: "Germany" },
+  { code: "FR", name: "France" },
+  { code: "IT", name: "Italy" },
+  { code: "ES", name: "Spain" },
+  { code: "NL", name: "Netherlands" },
+  { code: "SE", name: "Sweden" },
+  { code: "NO", name: "Norway" },
+  { code: "DK", name: "Denmark" },
+  { code: "FI", name: "Finland" },
+  { code: "CH", name: "Switzerland" },
+  { code: "AT", name: "Austria" },
+  { code: "BE", name: "Belgium" },
+  { code: "PL", name: "Poland" },
+  { code: "PT", name: "Portugal" },
+  { code: "IE", name: "Ireland" },
+  { code: "AE", name: "United Arab Emirates" },
+  { code: "SA", name: "Saudi Arabia" },
+  { code: "QA", name: "Qatar" },
+  { code: "KW", name: "Kuwait" },
+  { code: "BH", name: "Bahrain" },
+  { code: "OM", name: "Oman" },
+  { code: "IL", name: "Israel" },
+  { code: "TR", name: "Turkey" },
+  { code: "ZA", name: "South Africa" },
+  { code: "NG", name: "Nigeria" },
+  { code: "EG", name: "Egypt" },
+  { code: "KE", name: "Kenya" },
+  { code: "BR", name: "Brazil" },
+  { code: "MX", name: "Mexico" },
+  { code: "AR", name: "Argentina" },
+  { code: "CL", name: "Chile" },
+  { code: "CO", name: "Colombia" },
+  { code: "RU", name: "Russia" },
+  { code: "UA", name: "Ukraine" },
+  { code: "GR", name: "Greece" },
+  { code: "CZ", name: "Czech Republic" },
+  { code: "HU", name: "Hungary" },
+  { code: "RO", name: "Romania" },
+];
+
 interface ShippingForm {
   name: string;
   email: string;
@@ -225,7 +292,7 @@ export function CheckoutClient({
                   {shippingData.city}, {shippingData.state}{" "}
                   {shippingData.postalCode}
                 </p>
-                <p>{shippingData.country}</p>
+                <p>{COUNTRIES.find(c => c.code === shippingData.country)?.name ?? shippingData.country}</p>
               </div>
             ) : (
               <form
@@ -284,12 +351,27 @@ export function CheckoutClient({
                     })}
                   />
                 </div>
-                <Input
-                  label="Country"
-                  id="country"
-                  error={errors.country?.message}
-                  {...register("country", { required: "Country is required" })}
-                />
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="country" className="text-xs font-bold tracking-wide text-[--color-foreground] uppercase">
+                    Country
+                  </label>
+                  <select
+                    id="country"
+                    className={`w-full border-2 rounded-xl px-4 py-3 text-sm font-medium bg-white text-[--color-foreground] focus:outline-none focus:border-[--color-primary] transition-colors appearance-none ${
+                      errors.country ? "border-red-400" : "border-[--color-border]"
+                    }`}
+                    {...register("country", { required: "Country is required" })}
+                  >
+                    {COUNTRIES.map(({ code, name }) => (
+                      <option key={code} value={code}>
+                        {name} ({code})
+                      </option>
+                    ))}
+                  </select>
+                  {errors.country && (
+                    <p className="text-xs text-red-500 font-medium">{errors.country.message}</p>
+                  )}
+                </div>
 
                 {intentError && (
                   <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
