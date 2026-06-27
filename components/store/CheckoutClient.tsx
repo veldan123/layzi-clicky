@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
-  CardElement,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
@@ -119,6 +121,27 @@ function SectionLabel({ number, title }: { number: string; title: string }) {
   );
 }
 
+const stripeElementStyle = {
+  base: {
+    fontSize: "15px",
+    color: "#111111",
+    fontFamily: "inherit",
+    "::placeholder": { color: "#9ca3af" },
+  },
+  invalid: { color: "#ef4444" },
+};
+
+function StripeField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className={labelClass}>{label}</label>
+      <div className="w-full border border-gray-200 rounded-lg px-4 py-3.5 bg-white focus-within:border-gray-900 focus-within:ring-1 focus-within:ring-gray-900 transition-colors">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function PaymentForm({ clientSecret, onSuccess }: { clientSecret: string; onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -131,7 +154,7 @@ function PaymentForm({ clientSecret, onSuccess }: { clientSecret: string; onSucc
     setSubmitting(true);
     setError(null);
 
-    const card = elements.getElement(CardElement);
+    const card = elements.getElement(CardNumberElement);
     if (!card) { setSubmitting(false); return; }
 
     const { error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
@@ -148,22 +171,18 @@ function PaymentForm({ clientSecret, onSuccess }: { clientSecret: string; onSucc
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="border border-gray-200 rounded-lg px-4 py-4 bg-white focus-within:border-gray-900 transition-colors">
-        <CardElement
-          options={{
-            style: {
-              base: {
-                fontSize: "15px",
-                color: "#111111",
-                fontFamily: "inherit",
-                "::placeholder": { color: "#9ca3af" },
-              },
-              invalid: { color: "#ef4444" },
-            },
-            hidePostalCode: true,
-          }}
-        />
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <StripeField label="Card Number">
+        <CardNumberElement options={{ style: stripeElementStyle, showIcon: true }} />
+      </StripeField>
+
+      <div className="grid grid-cols-2 gap-4">
+        <StripeField label="Expiry Date">
+          <CardExpiryElement options={{ style: stripeElementStyle }} />
+        </StripeField>
+        <StripeField label="Security Code (CVC)">
+          <CardCvcElement options={{ style: stripeElementStyle }} />
+        </StripeField>
       </div>
 
       {error && (
@@ -176,13 +195,13 @@ function PaymentForm({ clientSecret, onSuccess }: { clientSecret: string; onSucc
       <button
         type="submit"
         disabled={!stripe || !elements || submitting}
-        className="w-full bg-gray-900 text-white py-4 rounded-lg font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-[#FF3D00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-gray-900 text-white py-4 rounded-lg font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-[#FF3D00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
       >
         <Lock className="w-4 h-4" />
         {submitting ? "Processing payment…" : "Place Order"}
       </button>
 
-      <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+      <div className="flex items-center justify-center gap-4 text-xs text-gray-400 pt-1">
         <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> SSL Secured</span>
         <span>·</span>
         <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> Powered by Stripe</span>
