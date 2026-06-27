@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -218,6 +218,7 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
   const [stripePromise] = useState(() => loadStripe(stripePublishableKey));
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const orderIdRef = useRef<string | null>(null);
   const [step, setStep] = useState<"info" | "payment">("info");
   const [shippingData, setShippingData] = useState<ShippingForm | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -270,6 +271,7 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
 
       setClientSecret(json.clientSecret);
       setOrderId(json.orderId);
+      orderIdRef.current = json.orderId;
       setStep("payment");
     } catch (err) {
       setIntentError(err instanceof Error ? err.message : "Something went wrong");
@@ -280,7 +282,7 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
 
   const handlePaymentSuccess = () => {
     clearCart();
-    router.push(`/order-confirmation?orderId=${orderId}`);
+    window.location.href = `/order-confirmation?orderId=${orderIdRef.current}`;
   };
 
   if (items.length === 0) return null;
