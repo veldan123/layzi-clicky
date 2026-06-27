@@ -41,34 +41,43 @@ export async function POST(req: NextRequest) {
 
     if (!order) return Response.json({ received: true });
 
-    // Status stays PENDING (awaiting fulfillment). Mark payment as confirmed via stripe ID link.
-    // Send confirmation email
-    await resend.emails.send({
-      from: EMAIL_FROM,
-      to: order.customerEmail,
-      subject: `Order confirmed! #${order.id.slice(-8).toUpperCase()} — Layzi Clicky`,
-      react: React.createElement(OrderConfirmationEmail, {
-        customerName: order.customerName,
-        orderId: order.id,
-        items: order.items.map((i) => ({
-          productName: i.productName,
-          variantName: i.variantName,
-          quantity: i.quantity,
-          price: i.price,
-        })),
-        subtotal: order.subtotal,
-        shipping: order.shipping,
-        total: order.total,
-        shippingAddress: order.shippingAddress as {
-          line1: string;
-          line2?: string;
-          city: string;
-          state: string;
-          postalCode: string;
-          country: string;
-        },
-      }),
+    // Mark order as paid
+    await db.order.update({
+      where: { id: orderId },
+      data: { status: "PACKING" },
     });
+
+    // Send confirmation email — non-fatal if Resend isn't configured yet
+    try {
+      await resend.emails.send({
+        from: EMAIL_FROM,
+        to: order.customerEmail,
+        subject: `Order confirmed! #${order.id.slice(-8).toUpperCase()} — Layzi Clicky`,
+        react: React.createElement(OrderConfirmationEmail, {
+          customerName: order.customerName,
+          orderId: order.id,
+          items: order.items.map((i) => ({
+            productName: i.productName,
+            variantName: i.variantName,
+            quantity: i.quantity,
+            price: i.price,
+          })),
+          subtotal: order.subtotal,
+          shipping: order.shipping,
+          total: order.total,
+          shippingAddress: order.shippingAddress as {
+            line1: string;
+            line2?: string;
+            city: string;
+            state: string;
+            postalCode: string;
+            country: string;
+          },
+        }),
+      });
+    } catch (emailErr) {
+      console.error("Order confirmation email failed (non-fatal):", emailErr);
+    }
   }
 
   return Response.json({ received: true });
