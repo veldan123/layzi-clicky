@@ -123,6 +123,9 @@ export default async function OrderDetailPage({ params }: Props) {
               {order.customerName}
             </p>
             <p className="text-sm text-gray-500 mt-1">{order.customerEmail}</p>
+            {order.customerPhone && (
+              <p className="text-sm text-gray-500 mt-0.5">{order.customerPhone}</p>
+            )}
 
             <h3 className="font-bold text-sm text-gray-700 mt-5 mb-2">
               Shipping Address

@@ -15,12 +15,13 @@ const schema = z.object({
   customer: z.object({
     name: z.string().min(1),
     email: z.email(),
+    phone: z.string().min(1),
   }),
   shipping: z.object({
     line1: z.string().min(1),
     line2: z.string().optional(),
     city: z.string().min(1),
-    state: z.string().min(1),
+    state: z.string().optional(),
     postalCode: z.string().min(1),
     country: z.string().min(1),
   }),
@@ -31,12 +32,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
-      return Response.json({ error: "Invalid request" }, { status: 400 });
+      return Response.json({ error: "Invalid request", details: parsed.error.issues }, { status: 400 });
     }
 
     const { items, customer, shipping } = parsed.data;
 
-    // Fetch products and calculate totals server-side
     const productIds = [...new Set(items.map((i) => i.productId))];
     const products = await db.product.findMany({
       where: { id: { in: productIds }, active: true },
@@ -56,18 +56,14 @@ export async function POST(req: NextRequest) {
     for (const item of items) {
       const product = products.find((p) => p.id === item.productId);
       if (!product) {
-        return Response.json(
-          { error: `Product ${item.productId} not found` },
-          { status: 400 }
-        );
+        return Response.json({ error: `Product ${item.productId} not found` }, { status: 400 });
       }
 
       const variant = item.variantId
         ? product.variants.find((v) => v.id === item.variantId)
         : undefined;
 
-      const lineTotal = product.price * item.quantity;
-      subtotal += lineTotal;
+      subtotal += product.price * item.quantity;
 
       orderItems.push({
         productId: product.id,
@@ -82,32 +78,27 @@ export async function POST(req: NextRequest) {
     const shippingCost = calculateShipping(shipping.country, subtotal);
     const total = subtotal + shippingCost;
 
-    // Create order in DB
     const order = await db.order.create({
       data: {
         customerEmail: customer.email,
         customerName: customer.name,
+        customerPhone: customer.phone,
         shippingAddress: shipping,
         subtotal,
         shipping: shippingCost,
         total,
-        items: {
-          create: orderItems,
-        },
+        items: { create: orderItems },
       },
     });
 
-    // Create Stripe PaymentIntent
+    // Card-only payment intent — no Link, no wallets
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(total * 100), // cents
-      currency: "usd",
-      metadata: {
-        orderId: order.id,
-      },
-      automatic_payment_methods: { enabled: true },
+      amount: Math.round(total * 100),
+      currency: "sgd",
+      payment_method_types: ["card"],
+      metadata: { orderId: order.id },
     });
 
-    // Link payment intent to order
     await db.order.update({
       where: { id: order.id },
       data: { stripePaymentId: paymentIntent.id },

@@ -11,12 +11,11 @@ import {
 } from "@stripe/react-stripe-js";
 import { useForm } from "react-hook-form";
 import { useCart } from "@/store/cart";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { formatPrice } from "@/lib/utils";
 import { calculateShipping, shippingLabel } from "@/lib/shipping";
 import Image from "next/image";
 import Link from "next/link";
+import { ShieldCheck, Lock, ChevronRight, Package } from "lucide-react";
 
 const COUNTRIES = [
   { code: "SG", name: "Singapore" },
@@ -88,21 +87,39 @@ const COUNTRIES = [
 interface ShippingForm {
   name: string;
   email: string;
+  phone: string;
   line1: string;
   line2?: string;
   city: string;
-  state: string;
+  state?: string;
   postalCode: string;
   country: string;
 }
 
-function CheckoutForm({
-  orderId,
-  onSuccess,
-}: {
-  orderId: string;
-  onSuccess: () => void;
-}) {
+const inputClass =
+  "w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-colors bg-white";
+
+const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5";
+
+const errorClass = "mt-1 text-xs text-red-500";
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className={errorClass}>{message}</p>;
+}
+
+function SectionLabel({ number, title }: { number: string; title: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-5">
+      <span className="w-6 h-6 rounded-full bg-gray-900 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+        {number}
+      </span>
+      <h2 className="font-bold text-base text-gray-900">{title}</h2>
+    </div>
+  );
+}
+
+function PaymentForm({ onSuccess }: { onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
@@ -111,7 +128,6 @@ function CheckoutForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!stripe || !elements) return;
-
     setSubmitting(true);
     setError(null);
 
@@ -130,47 +146,39 @@ function CheckoutForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <h3 className="font-bold text-lg mb-4">Payment Details</h3>
-        <div className="p-4 border-2 border-[--color-border] rounded-xl focus-within:border-[--color-primary] transition-colors">
-          <PaymentElement
-            options={{
-              layout: "tabs",
-            }}
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="border border-gray-200 rounded-lg p-4 bg-white">
+        <PaymentElement options={{ layout: "accordion" }} />
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
-          {error}
+        <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          <span className="mt-0.5">⚠️</span>
+          <span>{error}</span>
         </div>
       )}
 
-      <Button
+      <button
         type="submit"
-        variant="primary"
-        size="lg"
-        className="w-full"
         disabled={!stripe || !elements || submitting}
-        loading={submitting}
+        className="w-full bg-gray-900 text-white py-4 rounded-lg font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-[#FF3D00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {submitting ? "Processing..." : "Place Order 🎉"}
-      </Button>
+        <Lock className="w-4 h-4" />
+        {submitting ? "Processing payment…" : "Place Order"}
+      </button>
 
-      <p className="text-xs text-center text-[--color-muted-foreground]">
-        🔒 Secured by Stripe. Your payment info is never stored on our servers.
-      </p>
+      <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+        <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> SSL Secured</span>
+        <span>·</span>
+        <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> Powered by Stripe</span>
+        <span>·</span>
+        <span>Card only</span>
+      </div>
     </form>
   );
 }
 
-export function CheckoutClient({
-  stripePublishableKey,
-}: {
-  stripePublishableKey: string;
-}) {
+export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey: string }) {
   const router = useRouter();
   const { items, total, clearCart } = useCart();
   const cartTotal = total();
@@ -178,9 +186,9 @@ export function CheckoutClient({
   const [stripePromise] = useState(() => loadStripe(stripePublishableKey));
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [step, setStep] = useState<"shipping" | "payment">("shipping");
+  const [step, setStep] = useState<"info" | "payment">("info");
   const [shippingData, setShippingData] = useState<ShippingForm | null>(null);
-  const [creatingIntent, setCreatingIntent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [intentError, setIntentError] = useState<string | null>(null);
 
   const {
@@ -188,9 +196,7 @@ export function CheckoutClient({
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<ShippingForm>({
-    defaultValues: { country: "SG" },
-  });
+  } = useForm<ShippingForm>({ defaultValues: { country: "SG" } });
 
   const watchedCountry = watch("country") || "SG";
   const estimatedShipping = calculateShipping(watchedCountry, cartTotal);
@@ -200,8 +206,8 @@ export function CheckoutClient({
     if (items.length === 0) router.push("/cart");
   }, [items, router]);
 
-  const onShippingSubmit = async (data: ShippingForm) => {
-    setCreatingIntent(true);
+  const onInfoSubmit = async (data: ShippingForm) => {
+    setSubmitting(true);
     setIntentError(null);
     setShippingData(data);
 
@@ -215,12 +221,12 @@ export function CheckoutClient({
             variantId: i.variantId,
             quantity: i.quantity,
           })),
-          customer: { name: data.name, email: data.email },
+          customer: { name: data.name, email: data.email, phone: data.phone },
           shipping: {
             line1: data.line1,
             line2: data.line2,
             city: data.city,
-            state: data.state,
+            state: data.state || data.city,
             postalCode: data.postalCode,
             country: data.country,
           },
@@ -234,11 +240,9 @@ export function CheckoutClient({
       setOrderId(json.orderId);
       setStep("payment");
     } catch (err) {
-      setIntentError(
-        err instanceof Error ? err.message : "Something went wrong"
-      );
+      setIntentError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
-      setCreatingIntent(false);
+      setSubmitting(false);
     }
   };
 
@@ -249,236 +253,307 @@ export function CheckoutClient({
 
   if (items.length === 0) return null;
 
+  const countryName = COUNTRIES.find(c => c.code === watchedCountry)?.name ?? watchedCountry;
+
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-4xl font-black mb-10">Checkout</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Top bar */}
+      <div className="bg-white border-b border-gray-100 py-4 px-6">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <Link href="/" className="font-black text-lg tracking-tight text-gray-900">
+            LAYZI CLICKY
+          </Link>
+          <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
+            <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
+            Secure Checkout
+          </div>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-        {/* Form column */}
-        <div className="lg:col-span-3 space-y-8">
-          {/* Shipping */}
-          <div
-            className={`bg-white rounded-2xl border p-6 ${
-              step === "payment"
-                ? "border-[--color-border] opacity-60"
-                : "border-[--color-primary]"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-black text-xl">
-                1. Shipping Information
-              </h2>
-              {step === "payment" && (
-                <button
-                  onClick={() => setStep("shipping")}
-                  className="text-sm font-semibold text-[--color-primary] hover:underline"
-                >
-                  Edit
-                </button>
-              )}
-            </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 lg:py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10">
 
-            {step === "payment" && shippingData ? (
-              <div className="text-sm text-[--color-muted-foreground] space-y-1">
-                <p className="font-semibold text-[--color-foreground]">
-                  {shippingData.name}
-                </p>
-                <p>{shippingData.email}</p>
-                <p>
-                  {shippingData.line1}
-                  {shippingData.line2 && `, ${shippingData.line2}`}
-                </p>
-                <p>
-                  {shippingData.city}, {shippingData.state}{" "}
-                  {shippingData.postalCode}
-                </p>
-                <p>{COUNTRIES.find(c => c.code === shippingData.country)?.name ?? shippingData.country}</p>
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSubmit(onShippingSubmit)}
-                className="space-y-4"
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input
-                    label="Full Name"
-                    id="name"
-                    placeholder="Jane Smith"
-                    error={errors.name?.message}
-                    {...register("name", { required: "Name is required" })}
-                  />
-                  <Input
-                    label="Email"
-                    id="email"
-                    type="email"
-                    placeholder="jane@example.com"
-                    error={errors.email?.message}
-                    {...register("email", { required: "Email is required" })}
-                  />
+          {/* Left — form */}
+          <div className="space-y-6">
+            {step === "info" ? (
+              <form onSubmit={handleSubmit(onInfoSubmit)} className="space-y-6">
+
+                {/* Contact */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <SectionLabel number="1" title="Contact Information" />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className={labelClass}>Full Name *</label>
+                        <input
+                          className={`${inputClass} ${errors.name ? "border-red-400 focus:border-red-400 focus:ring-red-400" : ""}`}
+                          placeholder="Jane Smith"
+                          {...register("name", { required: "Full name is required" })}
+                        />
+                        <FieldError message={errors.name?.message} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Email Address *</label>
+                        <input
+                          type="email"
+                          className={`${inputClass} ${errors.email ? "border-red-400 focus:border-red-400 focus:ring-red-400" : ""}`}
+                          placeholder="jane@example.com"
+                          {...register("email", {
+                            required: "Email is required",
+                            pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email address" },
+                          })}
+                        />
+                        <FieldError message={errors.email?.message} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Phone Number *</label>
+                      <input
+                        type="tel"
+                        className={`${inputClass} ${errors.phone ? "border-red-400 focus:border-red-400 focus:ring-red-400" : ""}`}
+                        placeholder="+65 9123 4567"
+                        {...register("phone", {
+                          required: "Phone number is required",
+                          minLength: { value: 6, message: "Enter a valid phone number" },
+                        })}
+                      />
+                      <FieldError message={errors.phone?.message} />
+                      <p className="mt-1.5 text-xs text-gray-400">For delivery updates only. We do not spam.</p>
+                    </div>
+                  </div>
                 </div>
-                <Input
-                  label="Address Line 1"
-                  id="line1"
-                  placeholder="123 Main St"
-                  error={errors.line1?.message}
-                  {...register("line1", { required: "Address is required" })}
-                />
-                <Input
-                  label="Address Line 2 (optional)"
-                  id="line2"
-                  placeholder="Apt 4B"
-                  {...register("line2")}
-                />
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <Input
-                    label="City"
-                    id="city"
-                    error={errors.city?.message}
-                    {...register("city", { required: "City is required" })}
-                  />
-                  <Input
-                    label="State / Province"
-                    id="state"
-                    error={errors.state?.message}
-                    {...register("state", { required: "State is required" })}
-                  />
-                  <Input
-                    label="Postal Code"
-                    id="postalCode"
-                    error={errors.postalCode?.message}
-                    {...register("postalCode", {
-                      required: "Postal code is required",
-                    })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="country" className="text-xs font-bold tracking-wide text-[--color-foreground] uppercase">
-                    Country
-                  </label>
-                  <select
-                    id="country"
-                    className={`w-full border-2 rounded-xl px-4 py-3 text-sm font-medium bg-white text-[--color-foreground] focus:outline-none focus:border-[--color-primary] transition-colors appearance-none ${
-                      errors.country ? "border-red-400" : "border-[--color-border]"
-                    }`}
-                    {...register("country", { required: "Country is required" })}
-                  >
-                    {COUNTRIES.map(({ code, name }) => (
-                      <option key={code} value={code}>
-                        {name} ({code})
-                      </option>
-                    ))}
-                  </select>
-                  {errors.country && (
-                    <p className="text-xs text-red-500 font-medium">{errors.country.message}</p>
-                  )}
+
+                {/* Shipping address */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <SectionLabel number="2" title="Shipping Address" />
+                  <div className="space-y-4">
+                    <div>
+                      <label className={labelClass}>Country *</label>
+                      <select
+                        className={`${inputClass} ${errors.country ? "border-red-400" : ""}`}
+                        {...register("country", { required: "Country is required" })}
+                      >
+                        {COUNTRIES.map(({ code, name }) => (
+                          <option key={code} value={code}>{name} ({code})</option>
+                        ))}
+                      </select>
+                      <FieldError message={errors.country?.message} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Address Line 1 *</label>
+                      <input
+                        className={`${inputClass} ${errors.line1 ? "border-red-400 focus:border-red-400 focus:ring-red-400" : ""}`}
+                        placeholder="Block / Street / Unit number"
+                        {...register("line1", { required: "Address is required" })}
+                      />
+                      <FieldError message={errors.line1?.message} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Address Line 2 <span className="text-gray-400 normal-case font-normal">(optional)</span></label>
+                      <input
+                        className={inputClass}
+                        placeholder="Apartment, suite, floor"
+                        {...register("line2")}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={labelClass}>City *</label>
+                        <input
+                          className={`${inputClass} ${errors.city ? "border-red-400 focus:border-red-400 focus:ring-red-400" : ""}`}
+                          placeholder="Singapore"
+                          {...register("city", { required: "City is required" })}
+                        />
+                        <FieldError message={errors.city?.message} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Postal Code *</label>
+                        <input
+                          className={`${inputClass} ${errors.postalCode ? "border-red-400 focus:border-red-400 focus:ring-red-400" : ""}`}
+                          placeholder="123456"
+                          {...register("postalCode", { required: "Postal code is required" })}
+                        />
+                        <FieldError message={errors.postalCode?.message} />
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {intentError && (
-                  <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
-                    {intentError}
+                  <div className="flex items-start gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                    <span className="mt-0.5">⚠️</span>
+                    <span>{intentError}</span>
                   </div>
                 )}
 
-                <Button
+                <button
                   type="submit"
-                  variant="primary"
-                  size="lg"
-                  className="w-full"
-                  loading={creatingIntent}
+                  disabled={submitting}
+                  className="w-full bg-gray-900 text-white py-4 rounded-lg font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-[#FF3D00] transition-colors disabled:opacity-50"
                 >
-                  Continue to Payment
-                </Button>
+                  {submitting ? "Please wait…" : (
+                    <>Continue to Payment <ChevronRight className="w-4 h-4" /></>
+                  )}
+                </button>
               </form>
+            ) : (
+              <div className="space-y-6">
+                {/* Confirmed info summary */}
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-bold text-sm text-gray-900">Contact & Shipping</h2>
+                    <button
+                      onClick={() => setStep("info")}
+                      className="text-xs font-semibold text-[#FF3D00] hover:underline"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                  {shippingData && (
+                    <div className="text-sm text-gray-600 space-y-1 leading-relaxed">
+                      <p className="font-semibold text-gray-900">{shippingData.name}</p>
+                      <p>{shippingData.email} · {shippingData.phone}</p>
+                      <p className="pt-1 text-gray-500">
+                        {shippingData.line1}{shippingData.line2 && `, ${shippingData.line2}`},&nbsp;
+                        {shippingData.city} {shippingData.postalCode},&nbsp;
+                        {COUNTRIES.find(c => c.code === shippingData.country)?.name ?? shippingData.country}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Payment */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <SectionLabel number="3" title="Payment Details" />
+                  <p className="text-xs text-gray-400 mb-5 -mt-2">
+                    Your card information is encrypted and never stored on our servers.
+                  </p>
+                  {clientSecret && (
+                    <Elements
+                      stripe={stripePromise}
+                      options={{
+                        clientSecret,
+                        appearance: {
+                          theme: "stripe",
+                          variables: {
+                            colorPrimary: "#111111",
+                            colorBackground: "#ffffff",
+                            colorText: "#111111",
+                            colorDanger: "#ef4444",
+                            fontFamily: "inherit",
+                            borderRadius: "8px",
+                            spacingUnit: "4px",
+                          },
+                          rules: {
+                            ".Input": {
+                              border: "1px solid #e5e7eb",
+                              boxShadow: "none",
+                              padding: "12px 16px",
+                            },
+                            ".Input:focus": {
+                              border: "1px solid #111111",
+                              boxShadow: "0 0 0 1px #111111",
+                            },
+                            ".Label": {
+                              fontSize: "11px",
+                              fontWeight: "600",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.05em",
+                              color: "#6b7280",
+                            },
+                          },
+                        },
+                      }}
+                    >
+                      <PaymentForm orderId={orderId!} onSuccess={handlePaymentSuccess} />
+                    </Elements>
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
-          {/* Payment */}
-          {step === "payment" && clientSecret && orderId && (
-            <div className="bg-white rounded-2xl border border-[--color-primary] p-6">
-              <h2 className="font-black text-xl mb-6">2. Payment</h2>
-              <Elements
-                stripe={stripePromise}
-                options={{
-                  clientSecret,
-                  appearance: {
-                    theme: "flat",
-                    variables: {
-                      colorPrimary: "#ff6b9d",
-                      colorBackground: "#ffffff",
-                      colorText: "#1a1a2e",
-                      borderRadius: "12px",
-                      fontFamily: "inherit",
-                    },
-                  },
-                }}
-              >
-                <CheckoutForm orderId={orderId} onSuccess={handlePaymentSuccess} />
-              </Elements>
-            </div>
-          )}
-        </div>
+          {/* Right — order summary */}
+          <div className="lg:sticky lg:top-6 h-fit">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h2 className="font-bold text-sm text-gray-900">Order Summary</h2>
+              </div>
 
-        {/* Order summary */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl border border-[--color-border] p-6 sticky top-24">
-            <h2 className="font-black text-lg mb-5">Order Summary</h2>
-
-            <div className="space-y-4 mb-6">
-              {items.map((item) => (
-                <div
-                  key={`${item.productId}-${item.variantId}`}
-                  className="flex gap-3"
-                >
-                  <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-[#FFF0EB] flex-shrink-0">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                      unoptimized={item.image.endsWith(".svg")}
-                    />
-                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#FF3D00] text-white text-xs font-bold rounded-full flex items-center justify-center">
-                      {item.quantity}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate">{item.name}</p>
-                    {item.variantLabel && (
-                      <p className="text-xs text-[--color-muted-foreground]">
-                        {item.variantLabel}
-                      </p>
-                    )}
-                    <p className="text-sm font-black text-[--color-primary]">
+              {/* Items */}
+              <div className="divide-y divide-gray-50">
+                {items.map((item) => (
+                  <div key={`${item.productId}-${item.variantId}`} className="flex items-center gap-3 px-5 py-4">
+                    <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                        unoptimized={item.image.endsWith(".svg")}
+                      />
+                      <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {item.quantity}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
+                      {item.variantLabel && (
+                        <p className="text-xs text-gray-400">{item.variantLabel}</p>
+                      )}
+                    </div>
+                    <p className="text-sm font-bold text-gray-900 flex-shrink-0">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
+                ))}
+              </div>
+
+              {/* Totals */}
+              <div className="px-5 py-4 border-t border-gray-100 space-y-3">
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Subtotal</span>
+                  <span className="font-medium text-gray-900">{formatPrice(cartTotal)}</span>
                 </div>
-              ))}
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Shipping</span>
+                  <div className="text-right">
+                    {estimatedShipping === 0 ? (
+                      <span className="text-green-600 font-semibold">Free</span>
+                    ) : (
+                      <span className="font-medium text-gray-900">{formatPrice(estimatedShipping)}</span>
+                    )}
+                    <p className="text-[11px] text-gray-400 mt-0.5">{shippingLabel(watchedCountry, cartTotal)}</p>
+                  </div>
+                </div>
+                <div className="flex justify-between font-bold text-base text-gray-900 pt-3 border-t border-gray-100">
+                  <span>Total</span>
+                  <span>{formatPrice(estimatedTotal)}</span>
+                </div>
+                <p className="text-[11px] text-gray-400">
+                  Prices in USD · {countryName} shipping applied
+                </p>
+              </div>
+
+              {/* Trust badges */}
+              <div className="px-5 py-4 bg-gray-50 border-t border-gray-100">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <Package className="w-3.5 h-3.5 text-gray-400" />
+                    Printed fresh when you order
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
+                    Secured by Stripe · PCI DSS Level 1
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="border-t border-[--color-border] pt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-[--color-muted-foreground]">Subtotal</span>
-                <span>{formatPrice(cartTotal)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-[--color-muted-foreground]">Shipping</span>
-                {estimatedShipping === 0 ? (
-                  <span className="text-[--color-success] font-semibold">Free</span>
-                ) : (
-                  <span className="font-semibold">{formatPrice(estimatedShipping)}</span>
-                )}
-              </div>
-              <p className="text-[10px] text-[--color-muted-foreground]">
-                {shippingLabel(watchedCountry, cartTotal)}
-              </p>
-              <div className="flex justify-between font-black text-lg pt-2 border-t border-[--color-border]">
-                <span>Total</span>
-                <span className="text-[--color-primary]">
-                  {formatPrice(estimatedTotal)}
-                </span>
-              </div>
-            </div>
+            <p className="text-center text-xs text-gray-400 mt-4">
+              By placing your order you agree to our{" "}
+              <Link href="/faq" className="underline hover:text-gray-600">terms & FAQ</Link>
+            </p>
           </div>
         </div>
       </div>
