@@ -69,7 +69,7 @@ function MagneticButton({
     <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave} className="inline-block">
       <Link href={href}>
         <motion.span
-          style={{ x: sx, y: sy, display: "inline-flex" }}
+          style={{ x: sx, y: sy, display: "inline-flex", touchAction: "pan-y" }}
           whileTap={{ scale: 0.95 }}
           className={`items-center gap-2 px-7 py-3.5 text-sm font-bold tracking-wide uppercase cursor-pointer transition-colors ${
             variant === "dark"

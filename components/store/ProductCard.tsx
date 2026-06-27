@@ -68,6 +68,7 @@ export function ProductCard({
         rotateX: rotX,
         rotateY: rotY,
         transformPerspective: 900,
+        touchAction: "pan-y",
       }}
       whileHover={{ scale: 1.03, y: -6 }}
       transition={{ scale: { duration: 0.3 }, y: { duration: 0.3 } }}

@@ -84,6 +84,7 @@ export function Navbar() {
               transition={{ duration: 0.4, delay: 0.3 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              style={{ touchAction: "pan-y" }}
               onClick={openCart}
               className="relative p-2 hover:bg-black/5 rounded-md transition-colors"
               aria-label="Open cart"

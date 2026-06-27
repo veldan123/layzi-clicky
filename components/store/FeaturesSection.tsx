@@ -48,6 +48,7 @@ function FeatureCard({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -8 }}
+      style={{ touchAction: "pan-y" }}
       className="group relative border border-[#E2E1DC] p-8 cursor-default overflow-hidden bg-white transition-shadow duration-300 hover:shadow-2xl hover:shadow-black/8"
     >
       {/* Animated border bottom on hover */}

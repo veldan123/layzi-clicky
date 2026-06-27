@@ -36,7 +36,7 @@ function MagneticLink({
     <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave} className="inline-block flex-shrink-0">
       <Link href={href}>
         <motion.span
-          style={{ x: sx, y: sy, display: "inline-flex" }}
+          style={{ x: sx, y: sy, display: "inline-flex", touchAction: "pan-y" }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className={className}
