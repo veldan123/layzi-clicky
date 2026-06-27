@@ -1,56 +1,81 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function SplashScreen() {
-  const [show, setShow] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShow(false), 1800);
+    // Only show once per browser session
+    if (sessionStorage.getItem("lc_splash_seen")) return;
+    sessionStorage.setItem("lc_splash_seen", "1");
+    setVisible(true);
+
+    const timer = setTimeout(() => setVisible(false), 2800);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <AnimatePresence>
-      {show && (
+      {visible && (
         <motion.div
           key="splash"
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#F8F7F3]"
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#111111] overflow-hidden"
+          initial={{ y: 0 }}
+          exit={{ y: "-100%" }}
+          transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1], delay: 0.1 }}
         >
-          <div className="text-center">
+          {/* Background glow */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#FF3D00] opacity-[0.06] blur-[120px]" />
+          </motion.div>
+
+          <div className="relative flex flex-col items-center gap-6">
+            {/* Logo */}
             <motion.div
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-              className="mb-4"
+              initial={{ opacity: 0, scale: 0.82, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              className="w-52 h-52 md:w-64 md:h-64 relative"
             >
-              <motion.div
-                animate={{ rotate: [0, -10, 10, -10, 0] }}
-                transition={{ delay: 0.6, duration: 0.6 }}
-                className="text-7xl"
-              >
-                🎯
-              </motion.div>
+              <Image
+                src="/logo.png"
+                alt="Layzi Clicky"
+                fill
+                className="object-contain"
+                priority
+              />
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-4xl font-black text-[--color-primary] tracking-tight"
-            >
-              Layzi Clicky
-            </motion.h1>
+            {/* Tagline clip reveal */}
+            <div className="overflow-hidden">
+              <motion.p
+                initial={{ y: "110%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
+                className="text-[10px] font-bold tracking-[0.35em] text-[#FF3D00] uppercase"
+              >
+                3D Printed Fidgets
+              </motion.p>
+            </div>
 
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
-              className="mt-4 h-1 w-32 rounded-full bg-gradient-to-r from-[--color-primary] to-[--color-secondary] mx-auto origin-left"
-            />
+            {/* Progress bar */}
+            <div className="w-32 h-px bg-white/10 overflow-hidden mt-2">
+              <motion.div
+                className="h-full bg-[#FF3D00]"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                style={{ originX: 0 }}
+                transition={{ duration: 1.8, ease: "easeInOut", delay: 0.4 }}
+              />
+            </div>
           </div>
         </motion.div>
       )}
