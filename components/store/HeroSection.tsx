@@ -9,7 +9,7 @@ const headline = ["THE MOST", "SATISFYING", "CLICK."];
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#F8F7F3]">
+    <section className="relative min-h-screen flex flex-col justify-center bg-[#F8F7F3]">
       {/* Background accent block */}
       <div
         className="absolute top-0 right-0 w-[45%] h-full bg-[#111111] opacity-[0.03] pointer-events-none"
@@ -90,12 +90,12 @@ export function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right — Product visual */}
+          {/* Right — Product visual (hidden on mobile to prevent touch blocking) */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
+            className="relative hidden lg:block pointer-events-none"
           >
             <motion.div
               animate={{ y: [0, -14, 0] }}
@@ -121,13 +121,13 @@ export function HeroSection() {
                 initial={{ opacity: 0, x: -20, scale: 0.9 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
-                className="absolute -left-6 top-1/3 bg-white shadow-xl border border-[--color-border] p-4"
+                className="absolute -left-6 top-1/3 bg-white shadow-xl border border-[#E2E1DC] p-4"
               >
                 <div className="flex items-center gap-3">
-                  <Package className="w-4 h-4 text-[--color-primary]" />
+                  <Package className="w-4 h-4 text-[#FF3D00]" />
                   <div>
                     <p className="text-xl font-black leading-none" style={{ fontFamily: "var(--font-display)" }}>100%</p>
-                    <p className="text-[10px] font-bold text-[--color-muted-foreground] uppercase tracking-wider mt-0.5">Handmade</p>
+                    <p className="text-[10px] font-bold text-[#666660] uppercase tracking-wider mt-0.5">Handmade</p>
                   </div>
                 </div>
               </motion.div>
@@ -156,7 +156,7 @@ export function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none hidden md:flex"
       >
         <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[--color-muted]">Scroll</span>
         <motion.div
