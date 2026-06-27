@@ -119,7 +119,8 @@ export async function POST(req: NextRequest) {
       shippingCost,
     });
   } catch (err) {
-    console.error("create-payment-intent error:", err);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("create-payment-intent error:", message);
+    return Response.json({ error: message }, { status: 500 });
   }
 }
