@@ -22,7 +22,7 @@ export function SplashScreen() {
       {visible && (
         <motion.div
           key="splash"
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#111111] overflow-hidden"
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#F8F7F3] overflow-hidden"
           initial={{ y: 0 }}
           exit={{ y: "-100%" }}
           transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1], delay: 0.1 }}
@@ -67,7 +67,7 @@ export function SplashScreen() {
             </div>
 
             {/* Progress bar */}
-            <div className="w-32 h-px bg-white/10 overflow-hidden mt-2">
+            <div className="w-32 h-px bg-black/10 overflow-hidden mt-2">
               <motion.div
                 className="h-full bg-[#FF3D00]"
                 initial={{ scaleX: 0 }}
