@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/shop", label: "Shop" },
+  { href: "/collections", label: "Shop" },
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
 ];

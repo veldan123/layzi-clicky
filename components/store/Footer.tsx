@@ -3,17 +3,18 @@ import { Share2, Mail } from "lucide-react";
 
 const links = {
   Shop: [
+    { href: "/collections", label: "Collections" },
     { href: "/shop", label: "All Products" },
-    { href: "/products/cute-3d-printed-dumpling-clicker", label: "Dumpling Clicker" },
   ],
   Company: [
     { href: "/about", label: "About Us" },
     { href: "/faq", label: "FAQ" },
+    { href: "/terms", label: "Terms & Conditions" },
   ],
   Support: [
     { href: "/faq#shipping", label: "Shipping Info" },
     { href: "/faq#returns", label: "Returns" },
-    { href: "mailto:hello@lazyclicky.com", label: "Contact Us" },
+    { href: "mailto:hello@layziclicky.com", label: "Contact Us" },
   ],
 };
 
@@ -36,7 +37,7 @@ export function Footer() {
             </p>
             <div className="flex gap-3 mt-6">
               <a
-                href="mailto:hello@lazyclicky.com"
+                href="mailto:hello@layziclicky.com"
                 className="w-8 h-8 border border-white/20 flex items-center justify-center hover:border-white/50 hover:text-[--color-primary] transition-colors"
               >
                 <Mail className="w-3.5 h-3.5" />
