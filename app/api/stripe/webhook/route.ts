@@ -48,10 +48,17 @@ export async function POST(req: NextRequest) {
     });
 
     // Send confirmation email — non-fatal if Resend isn't configured yet
+    // While onboarding@resend.dev is the FROM, Resend only allows sending to
+    // the verified account email. Once layziclicky.com DNS propagates, update
+    // EMAIL_FROM in Vercel and this restriction is lifted.
+    const emailTo = EMAIL_FROM.includes("onboarding@resend.dev")
+      ? process.env.ADMIN_EMAIL ?? order.customerEmail
+      : order.customerEmail;
+
     try {
       await resend.emails.send({
         from: EMAIL_FROM,
-        to: order.customerEmail,
+        to: emailTo,
         subject: `Order confirmed! #${order.id.slice(-8).toUpperCase()} — Layzi Clicky`,
         react: React.createElement(OrderConfirmationEmail, {
           customerName: order.customerName,
