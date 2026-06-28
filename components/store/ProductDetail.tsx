@@ -53,7 +53,7 @@ export function ProductDetail({ product }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
         {/* Image gallery */}
-        <div className="sticky top-24">
+        <div className="lg:sticky lg:top-24">
           <motion.div
             key={activeImage}
             initial={{ opacity: 0.7 }}
