@@ -32,31 +32,36 @@ export async function POST(req: NextRequest) {
   if (event.type === "payment_intent.succeeded") {
     const pi = event.data.object;
     const orderId = pi.metadata?.orderId;
-    if (!orderId) return Response.json({ received: true });
+
+    console.log("[webhook] payment_intent.succeeded, orderId:", orderId);
+
+    if (!orderId) {
+      console.log("[webhook] no orderId in metadata, skipping");
+      return Response.json({ received: true });
+    }
 
     const order = await db.order.findUnique({
       where: { id: orderId },
       include: { items: true },
     });
 
+    console.log("[webhook] order found:", !!order);
     if (!order) return Response.json({ received: true });
 
-    // Mark order as paid
     await db.order.update({
       where: { id: orderId },
       data: { status: "PACKING" },
     });
 
-    // Send confirmation email — non-fatal if Resend isn't configured yet
-    // While onboarding@resend.dev is the FROM, Resend only allows sending to
-    // the verified account email. Once layziclicky.com DNS propagates, update
-    // EMAIL_FROM in Vercel and this restriction is lifted.
     const emailTo = EMAIL_FROM.includes("onboarding@resend.dev")
       ? process.env.ADMIN_EMAIL ?? order.customerEmail
       : order.customerEmail;
 
+    console.log("[webhook] sending email — from:", EMAIL_FROM, "to:", emailTo);
+    console.log("[webhook] RESEND_API_KEY set:", !!process.env.RESEND_API_KEY);
+
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: EMAIL_FROM,
         to: emailTo,
         subject: `Order confirmed! #${order.id.slice(-8).toUpperCase()} — Layzi Clicky`,
@@ -82,8 +87,9 @@ export async function POST(req: NextRequest) {
           },
         }),
       });
+      console.log("[webhook] email result:", JSON.stringify(result));
     } catch (emailErr) {
-      console.error("Order confirmation email failed (non-fatal):", emailErr);
+      console.error("[webhook] email error:", emailErr);
     }
   }
 
