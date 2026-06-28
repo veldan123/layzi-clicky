@@ -17,16 +17,23 @@ const steps = [
 ];
 
 export default async function HomePage() {
-  const products = await db.product.findMany({
-    where: { active: true },
-    include: { variants: true },
-    orderBy: { createdAt: "desc" },
-    take: 4,
-  });
+  const [products, collections] = await Promise.all([
+    db.product.findMany({
+      where: { active: true },
+      include: { variants: true },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    }),
+    db.collection.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: "asc" },
+      select: { id: true, name: true, slug: true, heroImage: true },
+    }),
+  ]);
 
   return (
     <div className="overflow-x-hidden">
-      <HeroSection />
+      <HeroSection collections={collections} />
 
       {/* Marquee strip */}
       <div className="bg-[#111111] text-white py-3.5 overflow-hidden">
@@ -70,7 +77,7 @@ export default async function HomePage() {
             </h2>
           </div>
           <Link
-            href="/shop"
+            href="/collections"
             className="hidden md:flex items-center gap-2 text-sm font-bold text-[#111111] hover:text-[#FF3D00] transition-colors group"
           >
             View all
@@ -101,7 +108,7 @@ export default async function HomePage() {
 
         <div className="text-center mt-8 md:hidden">
           <Link
-            href="/shop"
+            href="/collections"
             className="inline-flex items-center gap-2 text-sm font-bold text-[#111111] border border-[#E2E1DC] px-6 py-3 hover:border-[#111111] transition-colors"
           >
             View All Products

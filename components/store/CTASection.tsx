@@ -94,7 +94,7 @@ export function CTASection() {
         </div>
 
         <MagneticLink
-          href="/shop"
+          href="/collections"
           className="items-center gap-3 bg-white text-[#FF3D00] px-8 py-4 font-black text-sm tracking-wide uppercase cursor-pointer hover:bg-white/90 transition-colors relative z-10"
         >
           Shop Now

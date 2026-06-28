@@ -2,11 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, Package, Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const headline = ["THE MOST", "SATISFYING", "CLICK."];
+
+interface HeroCollection {
+  id: string;
+  name: string;
+  slug: string;
+  heroImage: string;
+}
 
 function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
   const [val, setVal] = useState(0);
@@ -84,8 +91,9 @@ function MagneticButton({
   );
 }
 
-export function HeroSection() {
+export function HeroSection({ collections = [] }: { collections?: HeroCollection[] }) {
   const sectionRef = useRef<HTMLElement>(null);
+  const [currentIdx, setCurrentIdx] = useState(0);
 
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -106,6 +114,16 @@ export function HeroSection() {
     mx.set((e.clientX - rect.left) / rect.width - 0.5);
     my.set((e.clientY - rect.top) / rect.height - 0.5);
   };
+
+  useEffect(() => {
+    if (collections.length <= 1) return;
+    const t = setInterval(() => {
+      setCurrentIdx(i => (i + 1) % collections.length);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [collections.length]);
+
+  const currentCollection = collections[currentIdx] ?? null;
 
   return (
     <section
@@ -177,7 +195,7 @@ export function HeroSection() {
               transition={{ duration: 0.5, delay: 0.68 }}
               className="flex flex-wrap gap-3 mb-14"
             >
-              <MagneticButton href="/shop" variant="dark">
+              <MagneticButton href="/collections" variant="dark">
                 Shop Now <ArrowRight className="w-4 h-4" />
               </MagneticButton>
               <MagneticButton href="/about" variant="outline">
@@ -212,12 +230,12 @@ export function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right — Parallax product visual */}
+          {/* Right — Collection carousel */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative hidden lg:block pointer-events-none"
+            className="relative hidden lg:block"
             style={{ x: imgX, y: imgY }}
           >
             <motion.div
@@ -225,19 +243,72 @@ export function HeroSection() {
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-[#FF3D00] translate-x-4 translate-y-4 opacity-10" />
+              <div className="absolute inset-0 bg-[#FF3D00] translate-x-4 translate-y-4 opacity-10 pointer-events-none" />
 
+              {/* Image area */}
               <div className="relative aspect-square bg-[#E2E1DC] overflow-hidden">
-                <Image
-                  src="/placeholder.svg"
-                  alt="Layzi Clicky Dumpling Fidget Clicker"
-                  fill
-                  className="object-cover"
-                  priority
-                  unoptimized
-                />
+                {currentCollection ? (
+                  <Link href={`/collections/${currentCollection.slug}`} className="block w-full h-full">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentCollection.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.7 }}
+                        className="absolute inset-0"
+                      >
+                        <Image
+                          src={currentCollection.heroImage || "/placeholder.svg"}
+                          alt={currentCollection.name}
+                          fill
+                          className="object-cover"
+                          priority
+                          unoptimized
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                  </Link>
+                ) : (
+                  <Image
+                    src="/placeholder.svg"
+                    alt="Layzi Clicky"
+                    fill
+                    className="object-cover"
+                    priority
+                    unoptimized
+                  />
+                )}
               </div>
 
+              {/* Collection name + dots below image */}
+              {currentCollection && (
+                <div className="mt-4 flex items-center justify-between px-1">
+                  <Link
+                    href={`/collections/${currentCollection.slug}`}
+                    className="group inline-flex items-center gap-2 text-sm font-bold text-[#111111] hover:text-[#FF3D00] transition-colors"
+                  >
+                    View Collection: {currentCollection.name}
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  {collections.length > 1 && (
+                    <div className="flex items-center gap-1.5">
+                      {collections.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setCurrentIdx(i)}
+                          className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                            i === currentIdx ? "bg-[#FF3D00]" : "bg-[#D1D0CB] hover:bg-[#A0A09A]"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Floating badges */}
               <motion.div
                 initial={{ opacity: 0, x: -20, scale: 0.9 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -257,7 +328,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, x: 20, scale: 0.9 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute -right-4 bottom-12 bg-[#FF3D00] text-white p-4"
+                className="absolute -right-4 bottom-16 bg-[#FF3D00] text-white p-4"
               >
                 <div className="flex items-center gap-3">
                   <Star className="w-4 h-4 fill-white" />

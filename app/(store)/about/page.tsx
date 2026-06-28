@@ -112,7 +112,7 @@ export default function AboutPage() {
               Ready to find your click?
             </h2>
             <Link
-              href="/shop"
+              href="/collections"
               className="inline-flex items-center gap-3 bg-[#111111] text-white px-8 py-4 font-bold text-sm tracking-wide uppercase hover:bg-[#FF3D00] transition-colors flex-shrink-0"
             >
               Shop Now

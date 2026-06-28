@@ -169,7 +169,7 @@ export default function FaqPage() {
             Email Us
           </a>
           <Link
-            href="/shop"
+            href="/collections"
             className="inline-flex items-center gap-2 bg-[#111111] text-white px-6 py-3 font-bold text-sm tracking-wide hover:bg-[#FF3D00] transition-colors"
           >
             Shop Now
