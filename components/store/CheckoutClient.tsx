@@ -15,9 +15,11 @@ import { useForm } from "react-hook-form";
 import { useCart } from "@/store/cart";
 import { formatPrice } from "@/lib/utils";
 import { calculateShipping, shippingLabel } from "@/lib/shipping";
+import { calculateDiscount } from "@/lib/coupons";
+import type { CouponResult } from "@/lib/coupons";
 import Image from "next/image";
 import Link from "next/link";
-import { ShieldCheck, Lock, ChevronRight, Package } from "lucide-react";
+import { ShieldCheck, Lock, ChevronRight, Package, Tag, X, Check } from "lucide-react";
 
 const COUNTRIES = [
   { code: "SG", name: "Singapore" },
@@ -224,6 +226,13 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
   const [submitting, setSubmitting] = useState(false);
   const [intentError, setIntentError] = useState<string | null>(null);
 
+  // Coupon state
+  const [appliedCoupons, setAppliedCoupons] = useState<CouponResult[]>([]);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [couponSuccess, setCouponSuccess] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -232,12 +241,47 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
   } = useForm<ShippingForm>({ defaultValues: { country: "SG" } });
 
   const watchedCountry = watch("country") || "SG";
-  const estimatedShipping = calculateShipping(watchedCountry, cartTotal);
-  const estimatedTotal = cartTotal + estimatedShipping;
+  const baseShipping = calculateShipping(watchedCountry, cartTotal);
+  const { discountAmount, finalShipping } = calculateDiscount(cartTotal, baseShipping, appliedCoupons);
+  const estimatedTotal = cartTotal - discountAmount + finalShipping;
 
   useEffect(() => {
     if (items.length === 0) router.push("/cart");
   }, [items, router]);
+
+  const applyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+    setCouponError("");
+    setCouponSuccess("");
+
+    const res = await fetch("/api/validate-coupon", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code: couponInput.trim(),
+        alreadyApplied: appliedCoupons.map(c => c.code),
+      }),
+    });
+
+    const json = await res.json();
+    setCouponLoading(false);
+
+    if (!res.ok) {
+      setCouponError(json.error ?? "Invalid code");
+      return;
+    }
+
+    setAppliedCoupons(prev => [...prev, json.coupon]);
+    setCouponSuccess(`${json.coupon.label} applied!`);
+    setCouponInput("");
+  };
+
+  const removeCoupon = (code: string) => {
+    setAppliedCoupons(prev => prev.filter(c => c.code !== code));
+    setCouponSuccess("");
+    setCouponError("");
+  };
 
   const onInfoSubmit = async (data: ShippingForm) => {
     setSubmitting(true);
@@ -263,6 +307,7 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
             postalCode: data.postalCode,
             country: data.country,
           },
+          appliedCodes: appliedCoupons.map(c => c.code),
         }),
       });
 
@@ -413,6 +458,66 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
                   </div>
                 </div>
 
+                {/* Discount code */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Tag className="w-4 h-4 text-gray-400" />
+                    <h2 className="font-bold text-base text-gray-900">Discount Code</h2>
+                    <span className="text-xs text-gray-400 font-normal">(optional)</span>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={e => { setCouponInput(e.target.value); setCouponError(""); setCouponSuccess(""); }}
+                      onKeyDown={e => e.key === "Enter" && (e.preventDefault(), applyCoupon())}
+                      placeholder="Enter code"
+                      className="flex-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-colors bg-white uppercase"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={couponLoading || !couponInput.trim()}
+                      className="px-5 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-lg hover:bg-[#FF3D00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                    >
+                      {couponLoading ? "…" : "Apply"}
+                    </button>
+                  </div>
+
+                  {couponError && (
+                    <p className="mt-2 text-xs text-red-500 flex items-center gap-1">
+                      <span>⚠️</span> {couponError}
+                    </p>
+                  )}
+                  {couponSuccess && (
+                    <p className="mt-2 text-xs text-green-600 flex items-center gap-1 font-medium">
+                      <Check className="w-3.5 h-3.5" /> {couponSuccess}
+                    </p>
+                  )}
+
+                  {appliedCoupons.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {appliedCoupons.map(c => (
+                        <span
+                          key={c.code}
+                          className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-800 text-xs font-bold px-3 py-1.5 rounded-full"
+                        >
+                          <Tag className="w-3 h-3" />
+                          {c.code} — {c.label}
+                          <button
+                            type="button"
+                            onClick={() => removeCoupon(c.code)}
+                            className="ml-1 text-green-600 hover:text-red-500 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {intentError && (
                   <div className="flex items-start gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                     <span className="mt-0.5">⚠️</span>
@@ -452,6 +557,15 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
                         {shippingData.city} {shippingData.postalCode},&nbsp;
                         {COUNTRIES.find(c => c.code === shippingData.country)?.name ?? shippingData.country}
                       </p>
+                    </div>
+                  )}
+                  {appliedCoupons.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
+                      {appliedCoupons.map(c => (
+                        <span key={c.code} className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                          <Tag className="w-3 h-3" /> {c.code}
+                        </span>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -514,13 +628,21 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
                   <span>Subtotal</span>
                   <span className="font-medium text-gray-900">{formatPrice(cartTotal)}</span>
                 </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span className="flex items-center gap-1">
+                      <Tag className="w-3 h-3" /> Discount
+                    </span>
+                    <span className="font-bold">−{formatPrice(discountAmount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Shipping</span>
                   <div className="text-right">
-                    {estimatedShipping === 0 ? (
+                    {finalShipping === 0 ? (
                       <span className="text-green-600 font-semibold">Free</span>
                     ) : (
-                      <span className="font-medium text-gray-900">{formatPrice(estimatedShipping)}</span>
+                      <span className="font-medium text-gray-900">{formatPrice(finalShipping)}</span>
                     )}
                     <p className="text-[11px] text-gray-400 mt-0.5">{shippingLabel(watchedCountry, cartTotal)}</p>
                   </div>
@@ -530,7 +652,7 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
                   <span>{formatPrice(estimatedTotal)}</span>
                 </div>
                 <p className="text-[11px] text-gray-400">
-                  Prices in USD · {countryName} shipping applied
+                  Prices in SGD · {countryName} shipping applied
                 </p>
               </div>
 
@@ -551,7 +673,7 @@ export function CheckoutClient({ stripePublishableKey }: { stripePublishableKey:
 
             <p className="text-center text-xs text-gray-400 mt-4">
               By placing your order you agree to our{" "}
-              <Link href="/faq" className="underline hover:text-gray-600">terms & FAQ</Link>
+              <Link href="/terms" className="underline hover:text-gray-600">Terms & Conditions</Link>
             </p>
           </div>
         </div>

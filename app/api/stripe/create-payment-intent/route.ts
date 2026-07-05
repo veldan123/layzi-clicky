@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { calculateShipping } from "@/lib/shipping";
+import { lookupStaticCode, calculateDiscount, CouponResult } from "@/lib/coupons";
 import * as z from "zod";
 
 const schema = z.object({
@@ -25,6 +26,7 @@ const schema = z.object({
     postalCode: z.string().min(1),
     country: z.string().min(1),
   }),
+  appliedCodes: z.array(z.string()).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -35,7 +37,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Invalid request", details: parsed.error.issues }, { status: 400 });
     }
 
-    const { items, customer, shipping } = parsed.data;
+    const { items, customer, shipping, appliedCodes = [] } = parsed.data;
 
     const productIds = [...new Set(items.map((i) => i.productId))];
     const products = await db.product.findMany({
@@ -58,13 +60,11 @@ export async function POST(req: NextRequest) {
       if (!product) {
         return Response.json({ error: `Product ${item.productId} not found` }, { status: 400 });
       }
-
       const variant = item.variantId
         ? product.variants.find((v) => v.id === item.variantId)
         : undefined;
 
       subtotal += product.price * item.quantity;
-
       orderItems.push({
         productId: product.id,
         variantId: variant?.id,
@@ -75,8 +75,30 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const shippingCost = calculateShipping(shipping.country, subtotal);
-    const total = subtotal + shippingCost;
+    // Validate and resolve coupons server-side (deduplicated)
+    const seen = new Set<string>();
+    const validCoupons: CouponResult[] = [];
+
+    for (const raw of appliedCodes) {
+      const key = raw.toLowerCase().trim();
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      const staticMatch = lookupStaticCode(raw);
+      if (staticMatch) {
+        validCoupons.push({ code: raw.toUpperCase(), ...staticMatch });
+        continue;
+      }
+
+      const dbCoupon = await db.coupon.findUnique({ where: { code: raw.toUpperCase() } });
+      if (dbCoupon && !dbCoupon.used) {
+        validCoupons.push({ code: dbCoupon.code, type: "percentage", value: 10, label: "10% off" });
+      }
+    }
+
+    const baseShipping = calculateShipping(shipping.country, subtotal);
+    const { discountAmount, finalShipping } = calculateDiscount(subtotal, baseShipping, validCoupons);
+    const total = subtotal - discountAmount + finalShipping;
 
     const order = await db.order.create({
       data: {
@@ -85,13 +107,22 @@ export async function POST(req: NextRequest) {
         customerPhone: customer.phone,
         shippingAddress: shipping,
         subtotal,
-        shipping: shippingCost,
+        shipping: finalShipping,
+        discount: discountAmount,
+        appliedCodes: validCoupons.map(c => c.code),
         total,
         items: { create: orderItems },
       },
     });
 
-    // Card-only payment intent — no Link, no wallets
+    // Mark any DB coupons as used
+    for (const c of validCoupons) {
+      const isStatic = !!lookupStaticCode(c.code);
+      if (!isStatic) {
+        await db.coupon.update({ where: { code: c.code }, data: { used: true } });
+      }
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(total * 100),
       currency: "sgd",
@@ -107,7 +138,8 @@ export async function POST(req: NextRequest) {
     return Response.json({
       clientSecret: paymentIntent.client_secret,
       orderId: order.id,
-      shippingCost,
+      shippingCost: finalShipping,
+      discountAmount,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

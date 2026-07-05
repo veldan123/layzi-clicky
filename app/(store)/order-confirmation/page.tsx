@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatPrice, formatDate } from "@/lib/utils";
-import { CheckCircle, Package, Mail, MapPin, ArrowRight } from "lucide-react";
+import { generateCouponCode } from "@/lib/coupons";
+import { CheckCircle, Package, Mail, MapPin, ArrowRight, Tag, Gift } from "lucide-react";
+import { CopyButton } from "@/components/store/CopyButton";
 
 export const metadata: Metadata = { title: "Order Confirmed — Layzi Clicky" };
 
@@ -30,6 +32,24 @@ interface Props {
   searchParams: Promise<{ orderId?: string }>;
 }
 
+async function getOrCreateRewardCoupon(orderId: string): Promise<string> {
+  const order = await db.order.findUnique({ where: { id: orderId }, select: { rewardCoupon: true } });
+  if (order?.rewardCoupon) return order.rewardCoupon;
+
+  // Generate a unique code
+  let code = "";
+  for (let i = 0; i < 10; i++) {
+    const candidate = generateCouponCode();
+    const exists = await db.coupon.findUnique({ where: { code: candidate } });
+    if (!exists) { code = candidate; break; }
+  }
+  if (!code) code = generateCouponCode(); // fallback, extremely unlikely to collide
+
+  await db.coupon.create({ data: { code } });
+  await db.order.update({ where: { id: orderId }, data: { rewardCoupon: code } });
+  return code;
+}
+
 export default async function OrderConfirmationPage({ searchParams }: Props) {
   const { orderId } = await searchParams;
 
@@ -39,6 +59,8 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
         include: { items: true },
       })
     : null;
+
+  const rewardCoupon = order ? await getOrCreateRewardCoupon(order.id) : null;
 
   const addr = order?.shippingAddress as {
     line1: string; line2?: string; city: string;
@@ -121,6 +143,20 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
                   <span>Subtotal</span>
                   <span>{formatPrice(order.subtotal)}</span>
                 </div>
+                {order.discount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span className="flex items-center gap-1">
+                      <Tag className="w-3.5 h-3.5" />
+                      Discount
+                      {order.appliedCodes.length > 0 && (
+                        <span className="text-green-500 font-normal">
+                          ({order.appliedCodes.join(", ")})
+                        </span>
+                      )}
+                    </span>
+                    <span className="font-bold">−{formatPrice(order.discount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Shipping</span>
                   <span className={order.shipping === 0 ? "text-green-600 font-semibold" : ""}>
@@ -133,6 +169,27 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* Reward coupon */}
+            {rewardCoupon && (
+              <div className="bg-white rounded-xl border border-[#FF3D00]/30 overflow-hidden">
+                <div className="px-5 py-4 bg-[#FFF0EB] border-b border-[#FF3D00]/20 flex items-center gap-2">
+                  <Gift className="w-4 h-4 text-[#FF3D00]" />
+                  <h3 className="font-bold text-sm text-gray-900">A gift for your next order</h3>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Use this code at checkout for <span className="font-bold text-gray-900">10% off</span> your next purchase. One-time use.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 bg-gray-50 border border-dashed border-gray-300 rounded-lg px-4 py-3 text-center">
+                      <span className="font-black text-xl tracking-[0.2em] text-gray-900">{rewardCoupon}</span>
+                    </div>
+                    <CopyButton text={rewardCoupon} />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Shipping address */}
             {addr && (
@@ -181,7 +238,7 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
         {/* CTA */}
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/shop"
+            href="/collections"
             className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-lg font-bold text-sm hover:bg-[#FF3D00] transition-colors"
           >
             Continue Shopping
