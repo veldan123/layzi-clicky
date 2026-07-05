@@ -6,8 +6,8 @@ import { ProductCard } from "@/components/store/ProductCard";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/store/AnimatedSection";
 
 export const metadata: Metadata = {
-  title: "Shop",
-  description: "Browse all Layzi Clicky 3D printed fidget clickers.",
+  title: "Shop All 3D Printed Fidget Clickers — Made in Singapore",
+  description: "Browse all Layzi Clicky 3D printed fidget clickers and fidget toys. Handcrafted in Singapore using premium PLA+ filament. Printed fresh for every order.",
 };
 
 export default async function ShopPage() {
@@ -25,11 +25,14 @@ export default async function ShopPage() {
           className="text-5xl md:text-6xl font-black text-[--color-foreground] leading-none"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          The Shop
+          3D Printed Fidget Toys
         </h1>
+        <p className="text-[--color-muted-foreground] mt-4 text-sm max-w-xl leading-relaxed">
+          Every clicker is handcrafted and 3D printed fresh in Singapore using premium PLA+ filament. No warehouses, no mass production — just made-to-order fidget toys designed to satisfy.
+        </p>
         {products.length > 0 && (
-          <p className="text-[--color-muted-foreground] mt-4 text-sm">
-            {products.length} {products.length === 1 ? "product" : "products"} — handcrafted, limited runs
+          <p className="text-[--color-muted-foreground] mt-3 text-xs font-bold uppercase tracking-wider">
+            {products.length} {products.length === 1 ? "product" : "products"} available
           </p>
         )}
       </AnimatedSection>

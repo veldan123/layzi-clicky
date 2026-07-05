@@ -4,8 +4,8 @@ import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/sto
 import { ArrowRight, Printer, Heart, Star } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about Layzi Clicky — handcrafted 3D printed fidget clickers made in Singapore.",
+  title: "About Us — Handcrafted 3D Printed Fidget Toys Made in Singapore",
+  description: "Layzi Clicky makes handcrafted 3D printed fidget clickers in Singapore. Every clicker is printed fresh to order using premium PLA+ filament. Learn our story.",
 };
 
 export default function AboutPage() {
@@ -20,9 +20,12 @@ export default function AboutPage() {
             className="text-5xl md:text-7xl font-black leading-none tracking-tight text-[--color-foreground] max-w-3xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Made by hand.<br />
+            3D printed in Singapore.<br />
             Made to <span className="text-[--color-primary]">click.</span>
           </h1>
+          <p className="text-[--color-muted-foreground] text-base mt-6 max-w-xl leading-relaxed">
+            Layzi Clicky makes handcrafted 3D printed fidget toys right here in Singapore — printed fresh for every order, obsessively tested, and designed to be the most satisfying thing in your pocket.
+          </p>
         </AnimatedSection>
       </section>
 

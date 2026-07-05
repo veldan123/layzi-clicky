@@ -5,11 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Plus, Minus, ArrowRight } from "lucide-react";
 
+
 const faqs = [
   {
     category: "Products",
     id: "products",
     items: [
+      {
+        q: "What are 3D printed fidget clickers?",
+        a: "3D printed fidget clickers are small handheld toys designed to be clicked repeatedly for a satisfying tactile and auditory experience. Unlike mass-produced plastic toys, Layzi Clicky's fidget clickers are individually 3D printed in Singapore using premium PLA+ filament — meaning each one is made fresh when you order, with precise tolerances for the perfect click feel. They're popular for stress relief, focus, and just the pure satisfaction of clicking.",
+      },
       {
         q: "What material are the clickers made from?",
         a: "All Layzi Clicky products are 3D printed using premium PLA+ filament. PLA+ is a biodegradable, plant-based plastic that's stronger and smoother than standard PLA. It's safe, durable, and produces a satisfying matte finish.",
@@ -20,7 +25,7 @@ const faqs = [
       },
       {
         q: "Can I request custom colors?",
-        a: "Yes! We love making custom pieces. Reach out to us at hello@lazyclicky.com with your color ideas and we'll let you know what's available. Custom orders typically take 3–5 extra days.",
+        a: "Yes! We love making custom pieces. Reach out to us at hello@layziclicky.com with your color ideas and we'll let you know what's available. Custom orders typically take 3–5 extra days.",
       },
       {
         q: "Are there size variations?",
@@ -56,7 +61,7 @@ const faqs = [
     items: [
       {
         q: "What is your return policy?",
-        a: "We accept returns within 14 days of delivery if your item arrives damaged or defective. Since each clicker is made to order, we're unable to accept returns for change of mind. Please contact us at hello@lazyclicky.com with photos of any issues.",
+        a: "We accept returns within 14 days of delivery if your item arrives damaged or defective. Since each clicker is made to order, we're unable to accept returns for change of mind. Please contact us at hello@layziclicky.com with photos of any issues.",
       },
       {
         q: "What if my clicker is defective?",
@@ -135,7 +140,7 @@ export default function FaqPage() {
         </h1>
         <p className="text-[--color-muted-foreground] text-sm mt-4">
           Can&apos;t find your answer?{" "}
-          <a href="mailto:hello@lazyclicky.com" className="text-[--color-foreground] font-semibold underline underline-offset-4 hover:text-[--color-primary] transition-colors">
+          <a href="mailto:hello@layziclicky.com" className="text-[--color-foreground] font-semibold underline underline-offset-4 hover:text-[--color-primary] transition-colors">
             Email us
           </a>
         </p>
@@ -163,7 +168,7 @@ export default function FaqPage() {
         </div>
         <div className="flex gap-3 flex-shrink-0">
           <a
-            href="mailto:hello@lazyclicky.com"
+            href="mailto:hello@layziclicky.com"
             className="inline-flex items-center gap-2 border border-[--color-border] px-6 py-3 font-bold text-sm tracking-wide hover:border-[--color-foreground] transition-colors"
           >
             Email Us
