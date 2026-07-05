@@ -16,6 +16,18 @@ const steps = [
   { number: "03", title: "Click. Love. Repeat.", desc: "Delivered to your door, ready to satisfy your clicking habit." },
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Store",
+  name: "Layzi Clicky",
+  url: "https://layziclicky.com",
+  description: "Handcrafted 3D printed fidget clickers made in Singapore.",
+  address: { "@type": "PostalAddress", addressCountry: "SG" },
+  priceRange: "$$",
+  currenciesAccepted: "SGD",
+  paymentAccepted: "Credit Card",
+};
+
 export default async function HomePage() {
   const [products, collections] = await Promise.all([
     db.product.findMany({
@@ -33,6 +45,7 @@ export default async function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HeroSection collections={collections} />
 
       {/* Marquee strip */}
