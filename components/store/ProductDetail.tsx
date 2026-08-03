@@ -63,7 +63,7 @@ export function ProductDetail({ product }: Props) {
           >
             <Image
               src={activeImage}
-              alt={product.name}
+              alt={`${product.name} — 3D printed fidget clicker handmade in Singapore by Layzi Clicky`}
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -125,6 +125,24 @@ export function ProductDetail({ product }: Props) {
           <p className="text-[--color-muted-foreground] leading-relaxed text-sm border-t border-[--color-border] pt-6">
             {product.description}
           </p>
+
+          {/* Specs */}
+          <div className="border border-[--color-border] p-5 space-y-2">
+            <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[--color-muted-foreground] mb-3">Specifications</p>
+            {[
+              ["Material", "Premium PLA+ Filament"],
+              ["Click Mechanism", "Tactile mechanical switch"],
+              ["Sensory", "Satisfying tactile feedback, ASMR-friendly click"],
+              ["Use Case", "Stress relief, focus, everyday carry (EDC)"],
+              ["Made In", "Singapore — printed fresh per order"],
+              ["Finish", "Smooth matte"],
+            ].map(([label, value]) => (
+              <div key={label} className="flex justify-between text-xs gap-4">
+                <span className="text-[--color-muted-foreground] font-semibold shrink-0">{label}</span>
+                <span className="text-[--color-foreground] text-right">{value}</span>
+              </div>
+            ))}
+          </div>
 
           {/* Variants */}
           {Object.entries(variantGroups).map(([groupName, variants]) => (

@@ -38,9 +38,9 @@ export default function AboutPage() {
                 It started with a 3D printer and a problem.
               </h2>
               <div className="space-y-4 text-[--color-muted-foreground] text-sm leading-relaxed">
-                <p>Late nights, tight deadlines, restless hands. I needed something to click. Everything in stores was either too big, too cheap, or just not satisfying enough.</p>
-                <p>So I designed my own. The first Dumpling Clicker was made for me — shaped like a little dumpling because why not, and tuned until the click felt exactly right.</p>
-                <p>Friends asked where they could get one. Then friends of friends. Layzi Clicky was born out of a simple idea: the best fidget toy is one made with intention, not mass-produced to hit a price point.</p>
+                <p>Late nights, tight deadlines, restless hands. I needed something to click. Everything in stores was either too big, too cheap, or just not satisfying enough. Fidget spinners felt cheap. Mass-produced clickers had no soul.</p>
+                <p>Coming from a love of mechanical keyboards — that crisp, tactile feedback when a key registers — I wanted the same feeling in a pocket-sized toy. So I designed my own, combining tactile mechanical switches with custom 3D printed shells shaped like things I love about Singapore.</p>
+                <p>The first one was the Dim Sum Clicker — a xiao long bao you can click. Friends asked where they could get one. Then friends of friends. Layzi Clicky was born out of a simple idea: the most satisfying fidget toy is one designed with intention, not manufactured by the millions.</p>
               </div>
             </AnimatedSection>
 
@@ -49,9 +49,9 @@ export default function AboutPage() {
                 Every order printed fresh.
               </h2>
               <div className="space-y-4 text-[--color-muted-foreground] text-sm leading-relaxed">
-                <p>There are no warehouses. No stock on shelves. When you order, your clicker goes straight to the printer. Every piece is fresh, every color is vibrant, nothing goes to waste.</p>
-                <p>We use premium PLA+ filament that&apos;s durable, smooth, and satisfying to hold. The click mechanism is tested before every order ships. If it does not feel right, we reprint it.</p>
-                <p>This is a small operation. That is intentional. Small means we can care about every single order.</p>
+                <p>There are no warehouses. No stock on shelves. When you order, your clicker goes straight to the 3D printer — FDM printed fresh using premium PLA+ filament, a biodegradable plant-based plastic that's stronger and smoother than standard PLA.</p>
+                <p>Each unit is hand-assembled here in Singapore. The tactile mechanical switch is installed and click-tested before the shell is sealed. If the click doesn't feel exactly right, it gets reprinted — full stop.</p>
+                <p>This on-demand approach means zero overproduction, zero waste, and complete color customization. You're not picking from leftover stock. You're getting something made for you.</p>
               </div>
             </AnimatedSection>
           </div>

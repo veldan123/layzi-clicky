@@ -16,6 +16,18 @@ const faqs = [
         a: "3D printed fidget clickers are small handheld toys designed to be clicked repeatedly for a satisfying tactile and auditory experience. Unlike mass-produced plastic toys, Layzi Clicky's fidget clickers are individually 3D printed in Singapore using premium PLA+ filament — meaning each one is made fresh when you order, with precise tolerances for the perfect click feel. They're popular for stress relief, focus, and just the pure satisfaction of clicking.",
       },
       {
+        q: "What makes Layzi Clicky different from mass-produced fidget toys?",
+        a: "Three things: the mechanism, the material, and the process. Every Layzi Clicky uses a tactile mechanical switch — the same technology behind satisfying mechanical keyboards — giving you a crisp, precise click that cheap spinner toys can't match. The shell is 3D printed from premium PLA+ filament, not injection-moulded plastic. And every clicker is made to order in Singapore — zero mass production, zero sitting in a warehouse. You get a fresh, hand-assembled piece every time.",
+      },
+      {
+        q: "Can I customize the color of my clicker?",
+        a: "Yes! Because everything is 3D printed on demand, we're not limited to pre-made stock colors. Reach out to us at hello@layziclicky.com with your color request before ordering and we'll let you know what PLA+ filament colors we currently have available. Custom color orders typically add 1–2 extra days to production.",
+      },
+      {
+        q: "How long does the on-demand printing process take before shipping?",
+        a: "Every clicker is printed fresh when you place your order — we don't hold inventory. Allow 2–3 business days for printing, hand-assembly, and click-testing. After that, Singapore orders ship via Singpost (3–5 business days) and international orders ship via Singpost Airmail. You'll receive a shipping confirmation email with tracking once your order is on its way.",
+      },
+      {
         q: "What material are the clickers made from?",
         a: "All Layzi Clicky products are 3D printed using premium PLA+ filament. PLA+ is a biodegradable, plant-based plastic that's stronger and smoother than standard PLA. It's safe, durable, and produces a satisfying matte finish.",
       },
