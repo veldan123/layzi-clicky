@@ -44,6 +44,10 @@ export const metadata: Metadata = {
     description: "Handcrafted 3D printed fidget clickers made in Singapore. Shop the Dim Sum collection.",
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

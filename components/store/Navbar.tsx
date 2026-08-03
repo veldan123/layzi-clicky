@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/store/cart";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
@@ -62,12 +63,15 @@ export function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Link
-              href="/"
-              className="font-bold text-lg tracking-tight text-[#111111] hover:text-[#FF3D00] transition-colors"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              LAYZI CLICKY
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/logo.png"
+                alt="Layzi Clicky"
+                width={120}
+                height={60}
+                className="h-10 w-auto object-contain"
+                priority
+              />
             </Link>
           </motion.div>
 
