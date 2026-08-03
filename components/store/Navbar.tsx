@@ -23,7 +23,7 @@ function NavLink({ href, label, index }: { href: string; label: string; index: n
     >
       <Link
         href={href}
-        className="relative text-sm font-semibold text-[#666660] hover:text-[#111111] transition-colors tracking-wide group"
+        className="relative text-base font-bold text-[#FF3D00] hover:text-[#111111] transition-colors tracking-wide group"
       >
         {label}
         <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#FF3D00] group-hover:w-full transition-all duration-300 ease-out" />
