@@ -167,7 +167,7 @@ export function HeroSection({ collections = [] }: { collections?: HeroCollection
                   <motion.h1
                     initial={{ y: "105%" }}
                     animate={{ y: 0 }}
-                    transition={{ duration: 0.75, delay: 0.15 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
                     className="text-[clamp(3rem,8vw,6.5rem)] font-black leading-none tracking-tight text-[#111111]"
                     style={{ fontFamily: "var(--font-display)" }}
                   >
@@ -264,7 +264,7 @@ export function HeroSection({ collections = [] }: { collections?: HeroCollection
                           fill
                           className="object-cover"
                           priority
-                          unoptimized
+                          unoptimized={currentCollection.heroImage?.endsWith(".svg")}
                         />
                       </motion.div>
                     </AnimatePresence>

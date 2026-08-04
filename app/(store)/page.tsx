@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // cache for 5 minutes, rebuild on new deploy
 
 import Link from "next/link";
 import { db } from "@/lib/db";
