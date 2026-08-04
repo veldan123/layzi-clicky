@@ -12,8 +12,9 @@ const nunito = Nunito({
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
+  weight: ["700"],
   display: "swap",
+  preload: true,
 });
 
 export const viewport: Viewport = {
