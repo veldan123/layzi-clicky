@@ -163,19 +163,18 @@ export function HeroSection({ collections = [] }: { collections?: HeroCollection
 
             <div className="space-y-1 mb-8">
               {headline.map((line, i) => (
-                <div key={line} className="overflow-hidden">
-                  <motion.h1
-                    initial={{ y: "105%" }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-[clamp(3rem,8vw,6.5rem)] font-black leading-none tracking-tight text-[#111111]"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    {line === "CLICK." ? (
-                      <>CLICK<span className="text-[#FF3D00]">.</span></>
-                    ) : line}
-                  </motion.h1>
-                </div>
+                <motion.h1
+                  key={line}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: i * 0.08 }}
+                  className="text-[clamp(3rem,8vw,6.5rem)] font-black leading-none tracking-tight text-[#111111]"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {line === "CLICK." ? (
+                    <>CLICK<span className="text-[#FF3D00]">.</span></>
+                  ) : line}
+                </motion.h1>
               ))}
             </div>
 
